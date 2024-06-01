@@ -15,10 +15,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * @ClassName JwtTokenUserInterceptor
- * @Description //TODO
- * @Date 2023-04-21 15:01:43
- * @Author myy
- * @Version 1.0
+ * @Description
  **/
 @Component
 @Slf4j
