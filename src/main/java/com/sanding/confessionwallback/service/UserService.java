@@ -1,8 +1,8 @@
 package com.sanding.confessionwallback.service;
 
 import com.sanding.confessionwallback.pojo.dto.UserLoginDTO;
-import com.sanding.confessionwallback.pojo.entity.User;
+import com.sanding.confessionwallback.pojo.vo.UserLoginVO;
 
 public interface UserService {
-    User wxLogin(UserLoginDTO userLoginDTO);
+    UserLoginVO wxLogin(UserLoginDTO userLoginDTO);
 }

@@ -1,77 +1,67 @@
 package com.sanding.confessionwallback.service.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sanding.confessionwallback.common.constant.MessageConstant;
-import com.sanding.confessionwallback.common.enumeration.AdminAndUserStatus;
 import com.sanding.confessionwallback.common.exception.LoginFailedException;
-import com.sanding.confessionwallback.common.properties.WeChatProperties;
-import com.sanding.confessionwallback.common.utils.HttpClientUtil;
 import com.sanding.confessionwallback.mapper.UserMapper;
 import com.sanding.confessionwallback.pojo.dto.UserLoginDTO;
 import com.sanding.confessionwallback.pojo.entity.User;
+import com.sanding.confessionwallback.pojo.vo.UserLoginVO;
 import com.sanding.confessionwallback.service.UserService;
+import com.sanding.confessionwallback.service.WeChatService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
 public class UserServiceImpl implements UserService{
 
-    private static final String WX_LOGIN = "https://api.weixin.qq.com/sns/jscode2session";
-
-
     @Autowired
-    private WeChatProperties weChatProperties;
-
+    private WeChatService weChatService;
     @Autowired
     private UserMapper userMapper;
-
-
-    /**
-     * 微信登录接口实现
-     * @param userLoginDTO
-     * @return
-     */
+    static String DEFAULT_NICKNAME_PREFIX = "圈友";
     @Override
-    public User wxLogin(UserLoginDTO userLoginDTO){
-        String openid = getOpenid(userLoginDTO.getCode());
-
-        if(openid == null){
+    public UserLoginVO wxLogin(UserLoginDTO userLoginDTO) {
+        String openid = getOpenid(userLoginDTO);
+        if(openid == null) {
             throw new LoginFailedException(MessageConstant.LOGIN_FAILED);
         }
         User user = userMapper.selectOne(
                 new LambdaQueryWrapper<User>()
                         .eq(User::getOpenid, openid)
         );
-        if(user == null) {
-            //未查询到该用户(新用户)
-            user = User.builder()
-                    .openid(openid)
-                    .userRegisterTime(LocalDateTime.now())
-                    .build();
-            userMapper.insert(user);
-        }else {
-            if(user.getUserStatus() == AdminAndUserStatus.UNOCCUPIED.getOrdinal())
-        }
 
-        return user;
+        String phone = getPhone(userLoginDTO);
+
+        user = user != null ? user : User.builder()
+                .openid(openid)
+                .userIp(null)
+                .userName(DEFAULT_NICKNAME_PREFIX + UUID.randomUUID().toString().replace("-", ""))
+                .userRegisterTime(LocalDateTime.now())
+                .build();
+        if (!phone.equals(user.getUserPhone())) {
+            user.setUserPhone(phone);
+            if(user.getUserId() == null) {
+                userMapper.insert(user);
+            }else {
+                userMapper.updateById(user);
+            }
+        }
+        UserLoginVO userLoginVO = new UserLoginVO();
+        BeanUtils.copyProperties(user, userLoginVO);
+        return userLoginVO;
     }
 
-    private String getOpenid(String code) {
-        Map<String, String> map = new HashMap<>();
-        map.put("appid", weChatProperties.getAppid());
-        map.put("secret", weChatProperties.getSecret());
-        map.put("js_code", code);
-        map.put("grant_type", "authorization_code");
-        String json = HttpClientUtil.doGet(WX_LOGIN, map);
-        JSONObject jsonObject = JSON.parseObject(json);
-        String openid =  jsonObject.getString("openid");
-        return openid;
+    private String getOpenid (UserLoginDTO userLoginDTO) {
+        return weChatService.wxLogin(userLoginDTO);
+    }
+
+    private String getPhone (UserLoginDTO userLoginDTO) {
+        return weChatService.getPhone(userLoginDTO);
     }
 }

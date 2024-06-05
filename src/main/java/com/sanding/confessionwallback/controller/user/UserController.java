@@ -36,17 +36,8 @@ public class UserController {
     @ApiOperation("微信登录")
     public Result<UserLoginVO> login(@RequestBody UserLoginDTO userLoginDTO){
         log.info("登录用户{}",userLoginDTO);
-        User user = userService.wxLogin(userLoginDTO);
+        UserLoginVO userLoginVO = userService.wxLogin(userLoginDTO);
 
-        Map<String, Object> claims = new HashMap<>();
-        claims.put(JwtClaimsConstant.USER_ID, user.getUserId());
-        String token = JWTUtils.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
-
-        UserLoginVO userLoginVO = UserLoginVO.builder()
-                .id(user.getUserId())
-                .openid(user.getOpenid())
-                .token(token)
-                .build();
         log.info("登陆成功{}", userLoginVO);
         return Result.success(userLoginVO);
     }
