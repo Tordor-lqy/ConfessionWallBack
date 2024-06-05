@@ -1,5 +1,7 @@
 package com.sanding.confessionwallback.pojo.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +15,7 @@ import java.util.Date;
 @TableName("cw_user")
 public class User {
     // 用户ID，主键
+    @TableId(type = IdType.AUTO)
     private Long userId;
     // 注册时间
     private LocalDateTime userRegisterTime;

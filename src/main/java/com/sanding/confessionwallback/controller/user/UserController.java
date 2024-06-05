@@ -37,7 +37,6 @@ public class UserController {
     public Result<UserLoginVO> login(@RequestBody UserLoginDTO userLoginDTO){
         log.info("登录用户{}",userLoginDTO);
         UserLoginVO userLoginVO = userService.wxLogin(userLoginDTO);
-
         log.info("登陆成功{}", userLoginVO);
         return Result.success(userLoginVO);
     }

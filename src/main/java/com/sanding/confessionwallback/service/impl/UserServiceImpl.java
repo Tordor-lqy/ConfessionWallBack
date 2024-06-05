@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sanding.confessionwallback.common.constant.MessageConstant;
 import com.sanding.confessionwallback.common.enumeration.AdminAndUserStatus;
 import com.sanding.confessionwallback.common.exception.LoginFailedException;
+import com.sanding.confessionwallback.common.utils.UserThreadLocal;
 import com.sanding.confessionwallback.mapper.UserMapper;
 import com.sanding.confessionwallback.pojo.dto.UserLoginDTO;
 import com.sanding.confessionwallback.pojo.entity.User;
@@ -62,6 +63,10 @@ public class UserServiceImpl implements UserService{
                 userMapper.updateById(user);
             }
         }
+
+        //线程绑定(userId)
+        UserThreadLocal.set(user.getUserId());
+
         UserLoginVO userLoginVO = new UserLoginVO();
         BeanUtils.copyProperties(user, userLoginVO);
         return userLoginVO;
