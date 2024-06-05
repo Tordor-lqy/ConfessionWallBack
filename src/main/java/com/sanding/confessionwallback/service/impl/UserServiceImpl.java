@@ -2,6 +2,7 @@ package com.sanding.confessionwallback.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sanding.confessionwallback.common.constant.MessageConstant;
+import com.sanding.confessionwallback.common.enumeration.AdminAndUserStatus;
 import com.sanding.confessionwallback.common.exception.LoginFailedException;
 import com.sanding.confessionwallback.mapper.UserMapper;
 import com.sanding.confessionwallback.pojo.dto.UserLoginDTO;
@@ -37,13 +38,22 @@ public class UserServiceImpl implements UserService{
         );
 
         String phone = getPhone(userLoginDTO);
-
+        //判断是否为新用户
         user = user != null ? user : User.builder()
                 .openid(openid)
                 .userIp(null)
                 .userName(DEFAULT_NICKNAME_PREFIX + UUID.randomUUID().toString().replace("-", ""))
                 .userRegisterTime(LocalDateTime.now())
+                .userPhone(phone)
+                .userStatus(AdminAndUserStatus.OCCUPIED.getOrdinal())
                 .build();
+        //判断手机号是否变化
+
+        if(AdminAndUserStatus.UNOCCUPIED.getOrdinal().equals(user.getUserStatus())) {
+            //用户被禁用
+            throw new LoginFailedException(MessageConstant.ACCOUNT_UNOCCUPIED);
+        }
+
         if (!phone.equals(user.getUserPhone())) {
             user.setUserPhone(phone);
             if(user.getUserId() == null) {
