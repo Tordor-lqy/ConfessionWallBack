@@ -9,6 +9,7 @@ import com.sanding.confessionwallback.common.properties.JwtProperties;
 import com.sanding.confessionwallback.common.result.Result;
 import com.sanding.confessionwallback.common.utils.JWTUtils;
 import com.sanding.confessionwallback.pojo.dto.AdminLoginDTO;
+import com.sanding.confessionwallback.pojo.dto.InsertCircleDTO;
 import com.sanding.confessionwallback.pojo.entity.Admin;
 import com.sanding.confessionwallback.pojo.vo.AdminLoginVO;
 import com.sanding.confessionwallback.service.AdminService;
@@ -78,5 +79,22 @@ public class AdminController {
     public Result<String> logout() {
         return Result.success();
     }
+
+    /**
+     *增加新的圈子
+     */
+    @PostMapping()
+    @ApiOperation("增加圈子")
+    public Result<String> insertCircle(@RequestBody InsertCircleDTO insertCircleDTO){
+        log.info("新增圈子：{}",insertCircleDTO);
+        adminService.insertCircle(insertCircleDTO);
+        return Result.success("success");
+    }
+
+    /**
+     * 查看某圈子下所有用户
+     * */
+
+
 
 }

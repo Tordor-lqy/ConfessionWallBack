@@ -1,11 +1,8 @@
 package com.sanding.confessionwallback.controller.user;
 
-import com.sanding.confessionwallback.common.constant.JwtClaimsConstant;
 import com.sanding.confessionwallback.common.properties.JwtProperties;
 import com.sanding.confessionwallback.common.result.Result;
-import com.sanding.confessionwallback.common.utils.JWTUtils;
 import com.sanding.confessionwallback.pojo.dto.UserLoginDTO;
-import com.sanding.confessionwallback.pojo.entity.User;
 import com.sanding.confessionwallback.pojo.vo.UserLoginVO;
 import com.sanding.confessionwallback.service.UserService;
 import io.swagger.annotations.Api;
@@ -16,9 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
