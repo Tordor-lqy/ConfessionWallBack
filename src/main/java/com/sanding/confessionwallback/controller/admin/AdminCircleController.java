@@ -49,7 +49,7 @@ public class AdminCircleController {
         return Result.success(list);
     }
     /**
-     * C
+     * 在圈子中增加用户
      * */
     @PostMapping("/{circleId}/{userId}")
     @ApiOperation("在圈子中增加用户")
@@ -64,6 +64,17 @@ public class AdminCircleController {
         circleService.updateUserCount(circle);
         return Result.success(circleUser);
     }
+    /**
+     * 在某圈子中删除某用户
+     * */
+    @ApiOperation("删除圈中用户")
+    @DeleteMapping("/{circleUserId}")
+    public Result<String> delectUserInCircle(@PathVariable Long circleUserId){
+        log.info("根据用户圈中id: {} 删除用户",circleUserId);
+        circleUserService.delectUserInCircle(circleUserId);
+        return Result.success("success");
+    }
+
 
 
     // 6月6日任务

@@ -40,4 +40,10 @@ public class CircleUserServiceImpl implements CircleUserService {
         return circleUser;
     }
 
+    //根据用户圈中id删除用户
+    @Override
+    public void delectUserInCircle(Long circleUserId) {
+        circleUserMapper.deleteById(circleUserId);
+    }
+
 }

@@ -10,4 +10,6 @@ public interface CircleUserService {
     List<User> selectUsersId(Long id);
 
     CircleUser insert(InsertUserInCircleDTO insertUserInCircleDTO);
+
+    void delectUserInCircle(Long circleUserId);
 }
