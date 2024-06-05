@@ -30,3 +30,6 @@ jwt:
   user-secret-key:
   user-ttl: 7200000
   user-token-name: authentication
+wechat:
+  appid: null
+  secret: null
