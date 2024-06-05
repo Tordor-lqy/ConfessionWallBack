@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping("/api/admin/circle")
 @Api("圈子操作相关接口")
 @Slf4j
-public class CircleController {
+public class AdminCircleController {
     @Autowired
     private CircleService circleService;
     @Autowired
