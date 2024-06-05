@@ -57,14 +57,4 @@ public class AdminServiceImpl implements AdminService {
 
         return admin;
     }
-
-    //新增圈子
-    @Override
-    public void insertCircle(InsertCircleDTO insertCircleDTO) {
-        Circle circle=new Circle();
-        BeanUtils.copyProperties(insertCircleDTO,circle);
-        circle.setCircleCreateTime(LocalDateTime.now());
-        circle.setCircleUpdateTime(LocalDateTime.now());
-        circleMapper.insert(circle);
-    }
 }

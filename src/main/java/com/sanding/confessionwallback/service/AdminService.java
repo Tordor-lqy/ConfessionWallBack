@@ -6,6 +6,4 @@ import com.sanding.confessionwallback.pojo.entity.Admin;
 
 public interface AdminService {
     Admin login(AdminLoginDTO employeeLoginDTO);
-
-    void insertCircle(InsertCircleDTO insertCircleDTO);
 }
