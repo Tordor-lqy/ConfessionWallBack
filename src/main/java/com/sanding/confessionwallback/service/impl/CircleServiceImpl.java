@@ -1,6 +1,7 @@
 package com.sanding.confessionwallback.service.impl;
 
 import com.sanding.confessionwallback.mapper.CircleMapper;
+import com.sanding.confessionwallback.mapper.CircleUserMapper;
 import com.sanding.confessionwallback.pojo.dto.InsertCircleDTO;
 import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.service.CircleService;
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 public class CircleServiceImpl implements CircleService {
     @Autowired
     private CircleMapper circleMapper;
+    @Autowired
+    private CircleUserMapper circleUserMapper;
 
     //新增圈子
     @Override
@@ -25,4 +28,21 @@ public class CircleServiceImpl implements CircleService {
         circleMapper.insert(circle);
         return circle;
     }
+
+    //更新圈子中的用户数量
+    @Override
+    public void updateUserCount(Circle circle,boolean flag) {
+        Integer count=circle.getCircleUserCount();
+        circle.setCircleUserCount(flag?count+1:count-1);
+        circleMapper.updateById(circle);
+    }
+
+    //根据id找到圈子
+    @Override
+    public Circle getCircleById(Long circleId) {
+        Circle circle = circleMapper.selectById(circleId);
+        return circle;
+    }
+
+
 }

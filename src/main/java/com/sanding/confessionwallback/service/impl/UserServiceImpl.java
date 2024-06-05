@@ -35,13 +35,13 @@ public class UserServiceImpl implements UserService{
         }
         User user = userMapper.selectOne(
                 new LambdaQueryWrapper<User>()
-                        .eq(User::getOpenid, openid)
+                        .eq(User::getUserOpenid, openid)
         );
 
         String phone = getPhone(userLoginDTO);
         //判断是否为新用户
         user = user != null ? user : User.builder()
-                .openid(openid)
+                .UserOpenid(openid)
                 .userIp(null)
                 .userName(DEFAULT_NICKNAME_PREFIX + UUID.randomUUID().toString().replace("-", ""))
                 .userRegisterTime(LocalDateTime.now())
