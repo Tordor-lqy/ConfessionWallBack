@@ -31,8 +31,9 @@ public class CircleServiceImpl implements CircleService {
 
     //更新圈子中的用户数量
     @Override
-    public void updateUserCount(Circle circle) {
-        circle.setCircleUserCount(circle.getCircleUserCount()+1);
+    public void updateUserCount(Circle circle,boolean flag) {
+        Integer count=circle.getCircleUserCount();
+        circle.setCircleUserCount(flag?count+1:count-1);
         circleMapper.updateById(circle);
     }
 
@@ -43,6 +44,5 @@ public class CircleServiceImpl implements CircleService {
         return circle;
     }
 
-    //查找
 
 }
