@@ -7,18 +7,26 @@ import com.sanding.confessionwallback.common.enumeration.AdminAndUserStatus;
 import com.sanding.confessionwallback.common.exception.LoginFailedException;
 import com.sanding.confessionwallback.common.utils.UserThreadLocal;
 import com.sanding.confessionwallback.mapper.AdminMapper;
+import com.sanding.confessionwallback.mapper.CircleMapper;
 import com.sanding.confessionwallback.pojo.dto.AdminLoginDTO;
+import com.sanding.confessionwallback.pojo.dto.InsertCircleDTO;
 import com.sanding.confessionwallback.pojo.entity.Admin;
+import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.service.AdminService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import java.time.LocalDateTime;
 
 @Service
 public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private AdminMapper adminMapper;
+    @Autowired
+    private CircleMapper circleMapper;
 
     @Override
     public Admin login(AdminLoginDTO employeeLoginDTO) {
@@ -48,5 +56,15 @@ public class AdminServiceImpl implements AdminService {
         UserThreadLocal.set(admin.getAdminId());
 
         return admin;
+    }
+
+    //新增圈子
+    @Override
+    public void insertCircle(InsertCircleDTO insertCircleDTO) {
+        Circle circle=new Circle();
+        BeanUtils.copyProperties(insertCircleDTO,circle);
+        circle.setCircleCreateTime(LocalDateTime.now());
+        circle.setCircleUpdateTime(LocalDateTime.now());
+        circleMapper.insert(circle);
     }
 }
