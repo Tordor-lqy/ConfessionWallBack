@@ -2,7 +2,9 @@ package com.sanding.confessionwallback.controller.admin;
 
 import com.sanding.confessionwallback.common.result.Result;
 import com.sanding.confessionwallback.pojo.dto.InsertCircleDTO;
+import com.sanding.confessionwallback.pojo.dto.InsertUserInCircleDTO;
 import com.sanding.confessionwallback.pojo.entity.Circle;
+import com.sanding.confessionwallback.pojo.entity.CircleUser;
 import com.sanding.confessionwallback.pojo.entity.User;
 import com.sanding.confessionwallback.service.CircleService;
 import com.sanding.confessionwallback.service.CircleUserService;
@@ -46,6 +48,23 @@ public class AdminCircleController {
         List<User> list=circleUserService.selectUsersId(id);
         return Result.success(list);
     }
+    /**
+     * C
+     * */
+    @PostMapping("/{circleId}/{userId}")
+    @ApiOperation("在圈子中增加用户")
+    public Result<CircleUser> insertUserInCircle(InsertUserInCircleDTO insertUserInCircleDTO){
+        log.info("根据圈子：{circleId} 增加用户{userId}");
+        //在圈子中增加用户
+        CircleUser circleUser=circleUserService.insert(insertUserInCircleDTO);
+        //更新圈子中的用户数量 +1
+        //1.找到圈子
+        Circle circle = circleService.getCircleById(insertUserInCircleDTO.getCircleId());
+        //2.更新用户数量
+        circleService.updateUserCount(circle);
+        return Result.success(circleUser);
+    }
+
 
     // 6月6日任务
     // todo 删除圈子
