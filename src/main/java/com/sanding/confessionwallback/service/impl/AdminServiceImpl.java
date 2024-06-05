@@ -9,16 +9,11 @@ import com.sanding.confessionwallback.common.utils.UserThreadLocal;
 import com.sanding.confessionwallback.mapper.AdminMapper;
 import com.sanding.confessionwallback.mapper.CircleMapper;
 import com.sanding.confessionwallback.pojo.dto.AdminLoginDTO;
-import com.sanding.confessionwallback.pojo.dto.InsertCircleDTO;
 import com.sanding.confessionwallback.pojo.entity.Admin;
-import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.service.AdminService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
-
-import java.time.LocalDateTime;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -44,6 +39,7 @@ public class AdminServiceImpl implements AdminService {
         }
         //密码md5加密
         password = DigestUtils.md5DigestAsHex(password.getBytes());
+
         if(!password.equals(admin.getAdminPassword())) {
             //密码错误
             throw new LoginFailedException(MessageConstant.PASSWORD_ERROR);

@@ -1,6 +1,5 @@
 package com.sanding.confessionwallback.controller.user;
 
-import com.sanding.confessionwallback.common.properties.JwtProperties;
 import com.sanding.confessionwallback.common.result.Result;
 import com.sanding.confessionwallback.pojo.dto.UserLoginDTO;
 import com.sanding.confessionwallback.pojo.vo.UserLoginVO;
@@ -23,9 +22,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-
-    private JwtProperties jwtProperties;
     @PostMapping("/login")
     @ApiOperation("微信登录")
     public Result<UserLoginVO> login(@RequestBody UserLoginDTO userLoginDTO){

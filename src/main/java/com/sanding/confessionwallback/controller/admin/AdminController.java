@@ -8,6 +8,7 @@ import com.sanding.confessionwallback.common.exception.LoginFailedException;
 import com.sanding.confessionwallback.common.properties.JwtProperties;
 import com.sanding.confessionwallback.common.result.Result;
 import com.sanding.confessionwallback.common.utils.JWTUtils;
+import com.sanding.confessionwallback.common.utils.UserThreadLocal;
 import com.sanding.confessionwallback.pojo.dto.AdminLoginDTO;
 import com.sanding.confessionwallback.pojo.dto.InsertCircleDTO;
 import com.sanding.confessionwallback.pojo.entity.Admin;
@@ -51,7 +52,7 @@ public class AdminController {
             throw new LoginFailedException(MessageConstant.LOGIN_FAILED);
         }
         // 判断账号是否被禁用
-        if(admin.getAdminStatus() == 0 ){
+        if(admin.getAdminStatus().equals(AdminAndUserStatus.UNOCCUPIED.getOrdinal()) ){
             throw new LoginFailedException(MessageConstant.ACCOUNT_UNOCCUPIED);
         }
         //登录成功后，生成jwt令牌
@@ -78,6 +79,8 @@ public class AdminController {
     @PostMapping("/logout")
     @ApiOperation("员工退出")
     public Result<String> logout() {
+        log.info("用户退出{}", UserThreadLocal.get());
+        UserThreadLocal.remove();
         return Result.success();
     }
 
