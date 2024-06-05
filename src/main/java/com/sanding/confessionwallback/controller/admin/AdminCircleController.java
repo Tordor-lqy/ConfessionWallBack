@@ -3,6 +3,7 @@ package com.sanding.confessionwallback.controller.admin;
 import com.sanding.confessionwallback.common.result.Result;
 import com.sanding.confessionwallback.pojo.dto.InsertCircleDTO;
 import com.sanding.confessionwallback.pojo.dto.InsertUserInCircleDTO;
+import com.sanding.confessionwallback.pojo.dto.UpdateUserRoleDTO;
 import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.pojo.entity.CircleUser;
 import com.sanding.confessionwallback.pojo.entity.User;
@@ -30,7 +31,7 @@ public class AdminCircleController {
     /**
      *增加新的圈子
      */
-    @PostMapping()
+    @PostMapping("/incircle")
     @ApiOperation("增加圈子")
     public Result<Circle> insertCircle(@RequestBody InsertCircleDTO insertCircleDTO){
         log.info("新增圈子：{}",insertCircleDTO);
@@ -72,6 +73,16 @@ public class AdminCircleController {
     public Result<String> delectUserInCircle(@PathVariable Long circleUserId){
         log.info("根据用户圈中id: {} 删除用户",circleUserId);
         circleUserService.delectUserInCircle(circleUserId);
+        return Result.success("success");
+    }
+    /**
+     * 更改某用户在某圈子的角色
+     * */
+    @PostMapping("/updateRole")
+    @ApiOperation("更改某用户在某圈子的角色")
+    public Result<String> updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRole){
+        log.info("更改某用户在某圈子的角色");
+        circleUserService.updateUserRole(updateUserRole);
         return Result.success("success");
     }
 

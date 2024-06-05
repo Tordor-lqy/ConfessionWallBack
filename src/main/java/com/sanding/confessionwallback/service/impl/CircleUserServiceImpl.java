@@ -3,6 +3,7 @@ package com.sanding.confessionwallback.service.impl;
 import com.sanding.confessionwallback.mapper.CircleUserMapper;
 import com.sanding.confessionwallback.mapper.UserMapper;
 import com.sanding.confessionwallback.pojo.dto.InsertUserInCircleDTO;
+import com.sanding.confessionwallback.pojo.dto.UpdateUserRoleDTO;
 import com.sanding.confessionwallback.pojo.entity.CircleUser;
 import com.sanding.confessionwallback.pojo.entity.User;
 import com.sanding.confessionwallback.service.CircleUserService;
@@ -44,6 +45,12 @@ public class CircleUserServiceImpl implements CircleUserService {
     @Override
     public void delectUserInCircle(Long circleUserId) {
         circleUserMapper.deleteById(circleUserId);
+    }
+
+    //更改某用户在某圈子的角色
+    @Override
+    public void updateUserRole(UpdateUserRoleDTO updateUserRole) {
+        circleUserMapper.updateUserRole(updateUserRole);
     }
 
 }
