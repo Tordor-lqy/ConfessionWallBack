@@ -1,4 +1,4 @@
-package com.sanding.confessionwallback.controller.circle;
+package com.sanding.confessionwallback.controller.admin;
 
 import com.sanding.confessionwallback.common.result.Result;
 import com.sanding.confessionwallback.pojo.dto.InsertCircleDTO;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/circle")
+@RequestMapping("/api/admin/circle")
 @Api("圈子操作相关接口")
 @Slf4j
 public class CircleController {
@@ -39,7 +39,7 @@ public class CircleController {
     /**
      * 查看某圈子下所有用户
      * */
-    @GetMapping("/{id}")
+    @GetMapping("/users/{id}")
     @ApiOperation("查看圈子用户")
     public Result<List<User>> selectAllUser(@ApiParam("圈子id") @PathVariable Long id){
         log.info("查看圈子：{} 所有用户",id);
@@ -47,5 +47,12 @@ public class CircleController {
         return Result.success(list);
     }
 
+    // 6月6日任务
+    // todo 删除圈子
+    // todo 获取圈子(简介)信息
+    // todo 修改圈子信息
+    // todo 添加圈子内的用户
+    // todo 删除圈子内的某个用户
+    // todo 更该圈子内某个用户的角色(权限)
 
 }
