@@ -1,7 +1,6 @@
 package com.sanding.confessionwallback.controller.admin;
 
 
-import ch.qos.logback.core.joran.util.beans.BeanUtil;
 import com.sanding.confessionwallback.common.constant.JwtClaimsConstant;
 import com.sanding.confessionwallback.common.constant.MessageConstant;
 import com.sanding.confessionwallback.common.exception.LoginFailedException;
@@ -11,13 +10,11 @@ import com.sanding.confessionwallback.common.utils.JWTUtils;
 import com.sanding.confessionwallback.pojo.dto.AdminLoginDTO;
 import com.sanding.confessionwallback.pojo.dto.InsertCircleDTO;
 import com.sanding.confessionwallback.pojo.entity.Admin;
-import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.pojo.vo.AdminLoginVO;
 import com.sanding.confessionwallback.service.AdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
