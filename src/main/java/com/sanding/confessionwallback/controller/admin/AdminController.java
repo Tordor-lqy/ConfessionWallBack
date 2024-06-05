@@ -36,14 +36,14 @@ public class AdminController {
     /**
      * 登录
      *
-     * @param employeeLoginDTO
+     * @param adminLoginDTO
      * @return
      */
     @PostMapping("/login")
-    @ApiOperation(value = "员工登录")
-    public Result<AdminLoginVO> login(@RequestBody AdminLoginDTO employeeLoginDTO) {
-        log.info("员工登录：{}", employeeLoginDTO);
-        Admin admin = adminService.login(employeeLoginDTO);
+    @ApiOperation(value = "管理端登录")
+    public Result<AdminLoginVO> login(@RequestBody AdminLoginDTO adminLoginDTO) {
+        log.info("员工登录：{}", adminLoginDTO);
+        Admin admin = adminService.login(adminLoginDTO);
         if(admin == null) {
             throw new LoginFailedException(MessageConstant.LOGIN_FAILED);
         }

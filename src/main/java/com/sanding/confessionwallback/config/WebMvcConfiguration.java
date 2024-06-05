@@ -43,14 +43,13 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         log.info("开始注册自定义拦截器...");
         registry.addInterceptor(jwtTokenAdminInterceptor)
                 .addPathPatterns("/admin/**")
-                .excludePathPatterns("/admin/employee/login")
-                .excludePathPatterns("/admin/employee/logout");
+                .excludePathPatterns("/admin/login")
+                .excludePathPatterns("/admin/logout");
 
 
         registry.addInterceptor(jwtTokenUserInterceptor)
                 .addPathPatterns("/user/**")
-                .excludePathPatterns("/user/user/login")
-                .excludePathPatterns("/user/shop/status");
+                .excludePathPatterns("/user/login");
 
     }
 
@@ -62,15 +61,15 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     @Bean
     public Docket docketAdmin() {
         ApiInfo apiInfo = new ApiInfoBuilder()
-                .title("苍穹外卖项目接口文档")
+                .title("表白墙项目接口文档")
                 .version("2.0")
-                .description("苍穹外卖项目接口文档")
+                .description("表白墙项目接口文档")
                 .build();
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
                 .groupName("后台管理接口")
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.sky.controller.admin"))
+                .apis(RequestHandlerSelectors.basePackage("com.sanding.confessionwallback.controller.admin"))
                 .paths(PathSelectors.any())
                 .build();
         return docket;
@@ -79,15 +78,15 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     @Bean
     public Docket docketUser() {
         ApiInfo apiInfo = new ApiInfoBuilder()
-                .title("苍穹外卖项目接口文档")
+                .title("表白墙项目接口文档")
                 .version("2.0")
-                .description("苍穹外卖项目接口文档")
+                .description("表白墙项目接口文档")
                 .build();
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
                 .groupName("用户接口")
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.sky.controller.user"))
+                .apis(RequestHandlerSelectors.basePackage("com.sanding.confessionwallback.controller.user"))
                 .paths(PathSelectors.any())
                 .build();
         return docket;
