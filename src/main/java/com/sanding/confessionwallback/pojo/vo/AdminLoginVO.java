@@ -25,7 +25,7 @@ public class AdminLoginVO {
     // IP地址，每次登录更新
     private String adminIp;
     // 管理员创建人
-    private LocalDateTime adminCreator;
+    private Long adminCreator;
     // 更新时间
     private LocalDateTime adminUpdateTime;
     // 创建时间

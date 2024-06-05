@@ -3,6 +3,7 @@ package com.sanding.confessionwallback.controller.admin;
 
 import com.sanding.confessionwallback.common.constant.JwtClaimsConstant;
 import com.sanding.confessionwallback.common.constant.MessageConstant;
+import com.sanding.confessionwallback.common.enumeration.AdminAndUserStatus;
 import com.sanding.confessionwallback.common.exception.LoginFailedException;
 import com.sanding.confessionwallback.common.properties.JwtProperties;
 import com.sanding.confessionwallback.common.result.Result;
@@ -46,6 +47,10 @@ public class AdminController {
         Admin admin = adminService.login(adminLoginDTO);
         if(admin == null) {
             throw new LoginFailedException(MessageConstant.LOGIN_FAILED);
+        }
+        // 判断账号是否被禁用
+        if(admin.getAdminStatus() == 0 ){
+            throw new LoginFailedException(MessageConstant.ACCOUNT_UNOCCUPIED);
         }
         //登录成功后，生成jwt令牌
         Map<String, Object> claims = new HashMap<>();
