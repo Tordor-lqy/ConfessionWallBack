@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @TableName("cw_circle")
 public class Circle {
-    private Integer circleId; // 圈子ID，主键
+    private Long circleId; // 圈子ID，主键
     private String circleName; // 圈子名称
     private String circleDescription; // 圈子描述
     private String circleAvatar; // 圈子头像

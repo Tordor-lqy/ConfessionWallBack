@@ -11,7 +11,7 @@ import java.util.Date;
 @TableName("cw_user")
 public class User {
     // 用户ID，主键
-    private int userId;
+    private Long userId;
     // 注册时间
     private LocalDateTime userRegisterTime;
     // 用户名
@@ -25,7 +25,7 @@ public class User {
     // 用户性别
     private String userSex;
     // 用户生日
-    private Date userBirthday;
+    private LocalDateTime userBirthday;
     // 用户头像
     private String userAvatar;
     // 用户个性签名
