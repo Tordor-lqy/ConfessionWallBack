@@ -83,7 +83,7 @@ public class UserCircleController {
     @GetMapping("/{circleId}")
     public Result<Circle> getCircleByCircleId(@PathVariable Long circleId) {
         log.info("查看某个圈子信息：{}id为", circleId);
-        Circle circle=circleService.getCircleByCircleId(circleId);
+        Circle circle=circleService.getCircleById(circleId);
         return Result.success(circle);
     }
 

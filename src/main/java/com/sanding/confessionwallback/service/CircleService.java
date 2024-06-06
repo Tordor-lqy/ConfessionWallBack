@@ -46,5 +46,4 @@ public interface CircleService {
 
     void deleteCircle(CircleDTO circleDTO);
 
-    Circle getCircleByCircleId(Long circleId);
 }

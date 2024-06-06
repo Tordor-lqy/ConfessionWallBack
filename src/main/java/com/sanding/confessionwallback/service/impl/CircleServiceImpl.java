@@ -212,15 +212,6 @@ public  class CircleServiceImpl implements CircleService {
         return circle;
     }
 
-    /**
-     * 根据CircleId获取圈子信息
-     * @param circleId
-     * @return
-     */
-    @Override
-    public Circle getCircleByCircleId(Long circleId) {
-        Circle circle = circleMapper.selectById(circleId);
-        return circle;
-    }
+
 
 }

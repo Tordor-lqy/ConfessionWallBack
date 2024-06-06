@@ -109,9 +109,17 @@ public class AdminCircleController {
         return Result.success();
     }
 
+    /**获取圈子信息
+     * */
+    @GetMapping("/{circleId}")
+    public Result<Circle> getCircleByCircleId(@PathVariable Long circleId) {
+        log.info("查看某个圈子信息：{}id为", circleId);
+        Circle circle=circleService.getCircleById(circleId);
+        return Result.success(circle);
+    }
+
 
     // 6月6日任务
-    // todo 获取圈子(简介)信息   Gut({id})
     // todo 修改圈子信息
 
 
