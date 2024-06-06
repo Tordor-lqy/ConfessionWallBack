@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequestMapping("/api/user/circle")
-public class CircleController {
+public class UserCircleController {
     @Autowired
     private CircleService circleService;
 
@@ -23,7 +23,7 @@ public class CircleController {
      * @param circlePageQueryDTO
      * @return
      */
-    @GetMapping("/page")
+    @GetMapping
     public Result<PageResult> page(CirclePageQueryDTO circlePageQueryDTO) {
         log.info("分页查询:{}", circlePageQueryDTO);
         PageResult pageResult = circleService.getPage(circlePageQueryDTO);
@@ -35,19 +35,18 @@ public class CircleController {
      * @param circleDTO
      * @return
      */
-    @PutMapping("/updateCircle")
+    @PutMapping
     public Result update(@RequestBody CircleDTO circleDTO) {
         log.info("更新圈子：{}", circleDTO);
         circleService.update(circleDTO);
         return Result.success();
     }
-
     /**
      * 添加圈子管理
      * @param circleUserDTO
      * @return
      */
-    @PutMapping("updateManager")
+    @PutMapping("/updateManager")
     public Result updateManager(@RequestBody CircleUserDTO circleUserDTO) {
         log.info("添加圈子管理：{}", circleUserDTO);
         circleService.updateManager(circleUserDTO);
@@ -68,13 +67,13 @@ public class CircleController {
 
     /**
      * 用户加入圈子
-     * @param circleUserDTO
+     * @param
      * @return
      */
     @PostMapping
-    public Result enterCircle(@RequestBody CircleUserDTO circleUserDTO) {
-        log.info("加入圈子：{}", circleUserDTO);
-        circleService.enterCircle(circleUserDTO);
+    public Result enterCircle(Long circleId) {
+        log.info("加入圈子的圈子id：{}", circleId);
+        circleService.enterCircle(circleId);
         return Result.success();
     }
 

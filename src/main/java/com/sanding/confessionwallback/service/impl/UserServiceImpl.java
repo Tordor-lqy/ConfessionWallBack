@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService{
         String phone = getPhone(userLoginDTO);
         //判断是否为新用户
         user = user != null ? user : User.builder()
-                .UserOpenid(openid)
+                .userOpenid(openid)
                 .userIp(null)
                 .userName(DEFAULT_NICKNAME_PREFIX + UUID.randomUUID().toString().replace("-", ""))
                 .userRegisterTime(LocalDateTime.now())

@@ -43,4 +43,5 @@ public class UserLoginVO implements Serializable {
     //用户openId
     private String openid;
 
+
 }

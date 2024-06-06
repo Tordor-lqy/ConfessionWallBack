@@ -1,7 +1,6 @@
 package com.sanding.confessionwallback.service.impl;
 
 
-import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -11,14 +10,11 @@ import com.sanding.confessionwallback.common.exception.PermissionAuthenticationE
 import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.mapper.CircleMapper;
 import com.sanding.confessionwallback.mapper.CircleUserMapper;
-import com.sanding.confessionwallback.mapper.CircleUserMapper;
-import com.sanding.confessionwallback.mapper.UserMapper;
 import com.sanding.confessionwallback.pojo.dto.CircleDTO;
 import com.sanding.confessionwallback.pojo.dto.CirclePageQueryDTO;
 import com.sanding.confessionwallback.pojo.dto.CircleUserDTO;
 import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.pojo.entity.CircleUser;
-import com.sanding.confessionwallback.pojo.entity.User;
 import com.sanding.confessionwallback.service.CircleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -26,11 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @Slf4j
-public class CircleServiceImpl implements CircleService {
+public  class CircleServiceImpl implements CircleService {
 
     @Autowired
     private CircleMapper circleMapper;
@@ -81,7 +76,7 @@ public class CircleServiceImpl implements CircleService {
         CircleUser ci = circleUserMapper.selectOne(queryWrapper);
 
         //若是就可以修改
-        if (ci.getCircleUserRole() != CircleUser.COM_USER) {
+        if (ci.getCircleUserRole() == CircleUser.SUPER_MANAGER||ci.getCircleUserRole() == CircleUser.MANAGER ) {
             Circle circle = Circle.builder().circleUpdateTime(LocalDateTime.now()).build();
             BeanUtils.copyProperties(circleDTO, circle);
             circleMapper.updateDong(circle);
@@ -151,42 +146,59 @@ public class CircleServiceImpl implements CircleService {
     }
     /**
      * 用户加入圈子
-     * @param circleUserDTO
+     * @param
      * @return
      */
     @Override
-    public void enterCircle(CircleUserDTO circleUserDTO) {
+    public void enterCircle(Long circleId) {
         Long userId = BaseContext.getCurrentId();
         //用户进圈
         CircleUser circleUser = new CircleUser();
         circleUser.setJoinTime(LocalDateTime.now());
-        circleUserDTO.setUserId(userId);
-        BeanUtils.copyProperties(circleUserDTO, circleUser);
+        circleUser.setUserId(userId);
+        circleUser.setCircleUserRole(CircleUser.COM_USER);
+        circleUser.setCircleId(circleId);
         log.info("{}", circleUser);
         circleUserMapper.insert(circleUser);
         //圈子人数加一
 
         LambdaUpdateWrapper<Circle> updateWrapper = new LambdaUpdateWrapper<Circle>();
         updateWrapper.setSql("circle_user_count = circle_user_count + 1")
-                .eq(Circle::getCircleId, circleUserDTO.getCircleId());
+                .eq(Circle::getCircleId, circleUser.getCircleId());
 
-        circleMapper.update(null, updateWrapper);
+        circleMapper.update( updateWrapper);
     }
 
-    //更新圈子中的用户数量
+    //新增圈子
+    @Override
+    public void insertCircle(CircleDTO circleDTO) {
+        Circle circle=new Circle();
+        BeanUtils.copyProperties(circleDTO,circle);
+        circle.setCircleCreateTime(LocalDateTime.now());
+        circle.setCircleUpdateTime(LocalDateTime.now());
+        circleMapper.insert(circle);
+    }
+
+    //更新圈子中的用户数量和更新时间
     @Override
     public void updateUserCount(Circle circle,boolean flag) {
         Integer count=circle.getCircleUserCount();
         circle.setCircleUserCount(flag?count+1:count-1);
-        circleMapper.updateById(circle);
+        circle.setCircleUpdateTime(LocalDateTime.now());
+        /**update circle表 set circleUserCount=用户数量 and circleUpdateTime=更新时间 where circleId=圈子id
+         * */
+        LambdaUpdateWrapper<Circle> wrapper=new LambdaUpdateWrapper<Circle>()
+                .set(Circle::getCircleUserCount,circle.getCircleUserCount())
+                .set(Circle::getCircleUpdateTime,circle.getCircleUpdateTime())
+                .eq(Circle::getCircleId,circle.getCircleId());
+        circleMapper.update(wrapper);
     }
 
-    //根据id找到圈子
+    //根据圈子id找到圈子
     @Override
     public Circle getCircleById(Long circleId) {
         Circle circle = circleMapper.selectById(circleId);
         return circle;
     }
-
 
 }

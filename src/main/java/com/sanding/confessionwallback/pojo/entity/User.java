@@ -42,5 +42,5 @@ public class User {
     // 用户IP地址
     private String userIp;
     //用户openId
-    private String UserOpenid;
+    private String userOpenid;
 }

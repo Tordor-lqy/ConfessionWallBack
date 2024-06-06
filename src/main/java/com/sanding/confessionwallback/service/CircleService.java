@@ -33,12 +33,14 @@ public interface CircleService {
     void updateRole(CircleUserDTO circleUserDTO);
     /**
      * 用户加入圈子
-     * @param circleUserDTO
+     * @param
      * @return
      */
-    void enterCircle(CircleUserDTO circleUserDTO);
+    void enterCircle(Long circleId);
 
     void updateUserCount(Circle circle, boolean b);
 
     Circle getCircleById(Long circleId);
+
+    void insertCircle(CircleDTO circleDTO);
 }
