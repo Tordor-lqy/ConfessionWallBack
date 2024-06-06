@@ -16,11 +16,10 @@ mybatis-plus:
 logging:
   level:
     com:
-      sanding:
-        confessionwallback:
-          mapper: debug
-          service: info
-          controller: info
+      sky:
+        mapper: debug
+        service: info
+        controller: info
 jwt:
   # 设置jwt签名加密时使用的秘钥
   admin-secret-key: confessionwallback
