@@ -77,5 +77,9 @@ public class UserCircleController {
         return Result.success();
     }
 
+    // todo 查看某个圈子的信息
+    // todo 退出圈子（删除数据即可）
+    // todo 查看已经加入的圈子（分页）
+    // todo 查询在某圈子中的身份,返回数字
 
 }
