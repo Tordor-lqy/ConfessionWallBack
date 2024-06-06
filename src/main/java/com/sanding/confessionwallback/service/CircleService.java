@@ -43,4 +43,11 @@ public interface CircleService {
     Circle getCircleById(Long circleId);
 
     void insertCircle(CircleDTO circleDTO);
+
+    /**
+     * 查看某个圈子信息
+     * @param circleId
+     * @return
+     */
+    Circle getCircleByCircleId(Long circleId);
 }

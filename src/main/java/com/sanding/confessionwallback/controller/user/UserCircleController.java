@@ -5,6 +5,7 @@ import com.sanding.confessionwallback.common.result.Result;
 import com.sanding.confessionwallback.pojo.dto.CircleDTO;
 import com.sanding.confessionwallback.pojo.dto.CirclePageQueryDTO;
 import com.sanding.confessionwallback.pojo.dto.CircleUserDTO;
+import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.service.CircleService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -76,8 +77,17 @@ public class UserCircleController {
         circleService.enterCircle(circleId);
         return Result.success();
     }
+    /**
+     * 查看某个圈子信息
+     */
+    @GetMapping("/{circleId}")
+    public Result<Circle> getCircleByCircleId(@PathVariable Long circleId) {
+        log.info("查看某个圈子信息：{}id为", circleId);
+        Circle circle=circleService.getCircleByCircleId(circleId);
+        return Result.success(circle);
+    }
 
-    // todo 查看某个圈子的信息
+
     // todo 退出圈子（删除数据即可）
     // todo 查看已经加入的圈子（分页）
     // todo 查询在某圈子中的身份,返回数字
