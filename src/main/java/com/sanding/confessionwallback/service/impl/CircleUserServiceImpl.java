@@ -1,7 +1,9 @@
 package com.sanding.confessionwallback.service.impl;
 
+import cn.hutool.db.sql.SqlUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.sanding.confessionwallback.common.context.BaseContext;
 import com.sanding.confessionwallback.mapper.CircleMapper;
 import com.sanding.confessionwallback.mapper.CircleUserMapper;
 import com.sanding.confessionwallback.mapper.UserMapper;
@@ -55,7 +57,7 @@ public class CircleUserServiceImpl implements CircleUserService {
         circleUserMapper.insert(circleUser);
     }
 
-    //根据用户圈中id删除用户
+    //根据用户圈中id删除用
     @Override
     public void delectUserInCircle(Long circleUserId) {
         circleUserMapper.deleteById(circleUserId);
@@ -81,6 +83,39 @@ public class CircleUserServiceImpl implements CircleUserService {
         //根据圈子id再找圈子
         Circle circle = circleMapper.selectById(circleUser.getCircleId());
         return circle;
+    }
+
+    /**
+     * 用户退圈
+     * @param circleId
+     */
+    @Override
+    public void deleteUser(Long circleId) {
+        Long userId = BaseContext.getCurrentId();
+        //删除用户圈子信息
+        LambdaQueryWrapper<CircleUser> wrapper=new LambdaQueryWrapper<CircleUser>()
+                .eq(CircleUser::getCircleId,circleId)
+                .eq(CircleUser::getUserId,userId);
+        circleUserMapper.delete(wrapper);
+    //更改圈子人数信息
+        // 先查出圈子对象
+        LambdaQueryWrapper<Circle> wr = new LambdaQueryWrapper<Circle>()
+                .select(Circle::getCircleUserCount)
+                .eq(Circle::getCircleId, circleId);
+
+// 查询结果
+        Circle circle = circleMapper.selectOne(wr);
+
+// 人数
+        Long circleUserCount = circle != null ? circle.getCircleUserCount() : 0L;
+
+
+        Integer  count= Integer.parseInt(circleUserCount.toString())-1;
+        //更改赋值
+        LambdaUpdateWrapper<Circle> wrapper1=new LambdaUpdateWrapper<Circle>()
+                .set(Circle::getCircleUserCount,count )
+                .eq(Circle::getCircleId,circleId);
+        circleMapper.update(wrapper1);
     }
 
 }

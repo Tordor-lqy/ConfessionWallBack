@@ -39,11 +39,22 @@ public interface CircleService {
     void enterCircle(Long circleId);
 
     void updateUserCount(Circle circle, boolean b);
-
+    /**
+     * 查看某个圈子信息
+     * @param circleId
+     * @return
+     */
     Circle getCircleById(Long circleId);
 
     void insertCircle(CircleDTO circleDTO);
 
-    void deleteCircle(CircleDTO circleDTO);
+    /**
+     * 查询已加入的圈子
+     * @param circlePageQueryDTO
+     * @return
+     */
+    PageResult getJoinedCircle(CirclePageQueryDTO circlePageQueryDTO);
+
+
 
 }

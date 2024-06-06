@@ -22,6 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -179,16 +182,43 @@ public  class CircleServiceImpl implements CircleService {
         circleMapper.insert(circle);
     }
 
-
-
-    //删除圈子
+    /**
+     * 查询已加入的圈子
+     * @param circlePageQueryDTO
+     * @return
+     */
     @Override
-    public void deleteCircle(CircleDTO circleDTO) {
-        //根据圈子id删除
-        circleMapper.deleteById(circleDTO.getCircleId());
-        //将用户和圈子的关系也删除
-        circleUserMapper.deleteById(circleDTO.getCircleId());
+    public PageResult getJoinedCircle(CirclePageQueryDTO circlePageQueryDTO) {
+        Long userId = BaseContext.getCurrentId();
+        // 查询用户加入的圈子ID列表
+        List<Long> joinedCircleIds = circleUserMapper.selectList(
+                new LambdaQueryWrapper<CircleUser>()
+                        .eq(CircleUser::getUserId, userId)
+        ).stream().map(CircleUser::getCircleId).collect(Collectors.toList());
+
+        if (joinedCircleIds.isEmpty()) {
+            // 如果用户没有加入任何圈子，返回空的分页结果
+            return new PageResult(0, Collections.emptyList());
+        }
+
+        // 创建分页对象
+        Page<Circle> page = new Page<>(circlePageQueryDTO.getP(), circlePageQueryDTO.getS());
+
+        // 创建查询条件
+        LambdaQueryWrapper<Circle> wrapper = new LambdaQueryWrapper<Circle>()
+                .in(Circle::getCircleId, joinedCircleIds)
+                .like(circlePageQueryDTO.getCircleName() != null, Circle::getCircleName, circlePageQueryDTO.getCircleName())
+                .eq(circlePageQueryDTO.getCircleType() != null, Circle::getCircleType, circlePageQueryDTO.getCircleType());
+
+        // 执行分页查询
+        Page<Circle> resultPage = circleMapper.selectPage(page, wrapper);
+
+        // 返回结果
+        return new PageResult(resultPage.getTotal(), resultPage.getRecords());
+
+
     }
+
 
     //更新圈子中的用户数量和更新时间
     @Override
@@ -205,12 +235,17 @@ public  class CircleServiceImpl implements CircleService {
         circleMapper.update(wrapper);
     }
 
-    //根据圈子id找到圈子
+    /**
+     * 根据CircleId获取圈子信息
+     * @param circleId
+     * @return
+     */
     @Override
     public Circle getCircleById(Long circleId) {
         Circle circle = circleMapper.selectById(circleId);
         return circle;
     }
+
 
 
 

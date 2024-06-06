@@ -7,6 +7,7 @@ import com.sanding.confessionwallback.pojo.dto.CirclePageQueryDTO;
 import com.sanding.confessionwallback.pojo.dto.CircleUserDTO;
 import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.service.CircleService;
+import com.sanding.confessionwallback.service.CircleUserService;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserCircleController {
     @Autowired
     private CircleService circleService;
-
+    @Autowired
+    private CircleUserService circleUserService;
     /**
      * 查看圈子
      * @param circlePageQueryDTO
@@ -86,10 +88,20 @@ public class UserCircleController {
         Circle circle=circleService.getCircleById(circleId);
         return Result.success(circle);
     }
+    @DeleteMapping
+    public Result deleteUser(Long circleId) {
+        log.info("退出圈子的id：{}",circleId);
+        circleUserService.deleteUser(circleId);
 
+        return Result.success();
+    }
+    @GetMapping("/joined")
+    public Result<PageResult>  getJoinedCircle(CirclePageQueryDTO circlePageQueryDTO) {
+        log.info("查看已经加入的圈子:{}",circlePageQueryDTO);
+      PageResult pageResult=  circleService.getJoinedCircle(circlePageQueryDTO);
+        return Result.success(pageResult);
+    }
 
-    // todo 退出圈子（删除数据即可）
-    // todo 查看已经加入的圈子（分页）
     // todo 查询在某圈子中的身份,返回数字
 
 }
