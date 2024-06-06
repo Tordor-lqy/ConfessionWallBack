@@ -25,7 +25,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
 @Service
 @Slf4j
 public  class CircleServiceImpl implements CircleService {
@@ -219,6 +218,14 @@ public  class CircleServiceImpl implements CircleService {
 
     }
 
+    //删除圈子
+    @Override
+    public void deleteCircle(CircleDTO circleDTO) {
+        //根据圈子id删除
+        circleMapper.deleteById(circleDTO.getCircleId());
+        //将用户和圈子的关系也删除
+        circleUserMapper.deleteById(circleDTO.getCircleId());
+    }
 
     //更新圈子中的用户数量和更新时间
     @Override
@@ -235,17 +242,12 @@ public  class CircleServiceImpl implements CircleService {
         circleMapper.update(wrapper);
     }
 
-    /**
-     * 根据CircleId获取圈子信息
-     * @param circleId
-     * @return
-     */
+    //根据圈子id找到圈子
     @Override
     public Circle getCircleById(Long circleId) {
         Circle circle = circleMapper.selectById(circleId);
         return circle;
     }
-
 
 
 

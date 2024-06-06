@@ -57,7 +57,7 @@ public class CircleUserServiceImpl implements CircleUserService {
         circleUserMapper.insert(circleUser);
     }
 
-    //根据用户圈中id删除用
+    //根据用户圈中id删除用户
     @Override
     public void delectUserInCircle(Long circleUserId) {
         circleUserMapper.deleteById(circleUserId);
@@ -84,7 +84,6 @@ public class CircleUserServiceImpl implements CircleUserService {
         Circle circle = circleMapper.selectById(circleUser.getCircleId());
         return circle;
     }
-
     /**
      * 用户退圈
      * @param circleId
@@ -97,7 +96,7 @@ public class CircleUserServiceImpl implements CircleUserService {
                 .eq(CircleUser::getCircleId,circleId)
                 .eq(CircleUser::getUserId,userId);
         circleUserMapper.delete(wrapper);
-    //更改圈子人数信息
+        //更改圈子人数信息
         // 先查出圈子对象
         LambdaQueryWrapper<Circle> wr = new LambdaQueryWrapper<Circle>()
                 .select(Circle::getCircleUserCount)
@@ -117,5 +116,4 @@ public class CircleUserServiceImpl implements CircleUserService {
                 .eq(Circle::getCircleId,circleId);
         circleMapper.update(wrapper1);
     }
-
 }

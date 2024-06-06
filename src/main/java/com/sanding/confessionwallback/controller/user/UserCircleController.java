@@ -98,7 +98,7 @@ public class UserCircleController {
     @GetMapping("/joined")
     public Result<PageResult>  getJoinedCircle(CirclePageQueryDTO circlePageQueryDTO) {
         log.info("查看已经加入的圈子:{}",circlePageQueryDTO);
-      PageResult pageResult=  circleService.getJoinedCircle(circlePageQueryDTO);
+        PageResult pageResult=  circleService.getJoinedCircle(circlePageQueryDTO);
         return Result.success(pageResult);
     }
 
