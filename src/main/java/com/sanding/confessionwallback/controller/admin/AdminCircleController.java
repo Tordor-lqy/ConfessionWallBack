@@ -118,10 +118,19 @@ public class AdminCircleController {
         return Result.success(circle);
     }
 
+    /**
+     * 更新圈子信息
+     * @param circleDTO
+     * @return
+     */
+    @PutMapping
+    public Result update(@RequestBody CircleDTO circleDTO) {
+        log.info("更新圈子：{}", circleDTO);
+        circleService.update(circleDTO);
+        return Result.success();
+    }
 
     // 6月6日任务
-    // todo 修改圈子信息
-
 
 
 
