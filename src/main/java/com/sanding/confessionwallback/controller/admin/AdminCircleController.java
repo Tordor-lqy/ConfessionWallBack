@@ -42,11 +42,11 @@ public class AdminCircleController {
     /**
      * 查看某圈子下所有用户
      * */
-    @GetMapping("/users/{circleId}")
+    @GetMapping("/users/{id}")
     @ApiOperation("查看圈子用户")
-    public Result<List<User>> selectAllUser(@ApiParam("圈子circleId") @PathVariable Long circleId){
-        log.info("查看圈子：{} 所有用户",circleId);
-        List<User> list=circleUserService.selectUsersId(circleId);
+    public Result<List<User>> selectAllUser(@ApiParam("圈子circleId") @PathVariable Long id){
+        log.info("查看圈子：{} 所有用户",id);
+        List<User> list=circleUserService.selectUsersId(id);
         return Result.success(list);
     }
     /**
@@ -62,7 +62,7 @@ public class AdminCircleController {
         log.info("更新用户数量");
         //1.找到圈子
         Circle circle = circleService.getCircleById(insertUserInCircleDTO.getCircleId());
-        //2.更新圈子中的用户数量和更新时间
+        //2.更新用户数量
         circleService.updateUserCount(circle, true);
         return Result.success(circleUser);
     }
@@ -72,12 +72,11 @@ public class AdminCircleController {
     @ApiOperation("删除圈中用户")
     @DeleteMapping("{circleUserId}")
     public Result<String> delectUserInCircle(@PathVariable Long circleUserId){
-        //1.找到圈子，再删除用户，再更改圈中用户数量和更新时间
-        log.info("找到用户所在圈子");
-        Circle circle = circleUserService.getCircleById(circleUserId);
         log.info("根据用户圈中id: {} 删除用户",circleUserId);
         circleUserService.delectUserInCircle(circleUserId);
         log.info("更新用户数量");
+        //1.找到圈子
+        Circle circle = circleService.getCircleById(circleUserId);
         //2.更新用户数量 true增加  false减少
         circleService.updateUserCount(circle,false);
         return Result.success("success");

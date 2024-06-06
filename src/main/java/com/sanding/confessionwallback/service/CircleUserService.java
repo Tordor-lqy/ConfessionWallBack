@@ -2,7 +2,6 @@ package com.sanding.confessionwallback.service;
 
 import com.sanding.confessionwallback.pojo.dto.InsertUserInCircleDTO;
 import com.sanding.confessionwallback.pojo.dto.UpdateUserRoleDTO;
-import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.pojo.entity.CircleUser;
 import com.sanding.confessionwallback.pojo.entity.User;
 
@@ -16,6 +15,4 @@ public interface CircleUserService {
     void delectUserInCircle(Long circleUserId);
 
     void updateUserRole(UpdateUserRoleDTO updateUserRole);
-
-    Circle getCircleById(Long circleUserId);
 }
