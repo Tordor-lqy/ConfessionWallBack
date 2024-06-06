@@ -181,6 +181,15 @@ public  class CircleServiceImpl implements CircleService {
 
 
 
+    //删除圈子
+    @Override
+    public void deleteCircle(CircleDTO circleDTO) {
+        //根据圈子id删除
+        circleMapper.deleteById(circleDTO.getCircleId());
+        //将用户和圈子的关系也删除
+        circleUserMapper.deleteById(circleDTO.getCircleId());
+    }
+
     //更新圈子中的用户数量和更新时间
     @Override
     public void updateUserCount(Circle circle,boolean flag) {

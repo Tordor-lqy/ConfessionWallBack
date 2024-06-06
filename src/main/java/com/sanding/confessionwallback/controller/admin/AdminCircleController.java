@@ -101,10 +101,17 @@ public class AdminCircleController {
         return Result.success();
     }
 
+    @DeleteMapping
+    @ApiOperation("删除圈子")
+    public Result deleteCircle(CircleDTO circleDTO){
+        log.info("删除圈子{}",circleDTO);
+        circleService.deleteCircle(circleDTO);
+        return Result.success();
+    }
+
 
     // 6月6日任务
-    // todo 删除圈子
-    // todo 获取圈子(简介)信息
+    // todo 获取圈子(简介)信息   Gut({id})
     // todo 修改圈子信息
 
 
