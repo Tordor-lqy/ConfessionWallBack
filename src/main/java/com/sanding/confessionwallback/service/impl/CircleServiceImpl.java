@@ -224,7 +224,9 @@ public  class CircleServiceImpl implements CircleService {
         //根据圈子id删除
         circleMapper.deleteById(circleDTO.getCircleId());
         //将用户和圈子的关系也删除
-        circleUserMapper.deleteById(circleDTO.getCircleId());
+        LambdaQueryWrapper<CircleUser> wrapper=new LambdaQueryWrapper<CircleUser>()
+                .eq(CircleUser::getCircleId,circleDTO.getCircleId());
+        circleUserMapper.delete(wrapper);
     }
 
     //更新圈子中的用户数量和更新时间
