@@ -88,6 +88,12 @@ public class UserCircleController {
         Circle circle=circleService.getCircleById(circleId);
         return Result.success(circle);
     }
+
+    /**
+     * 用户退出圈子
+     * @param circleId
+     * @return
+     */
     @DeleteMapping
     public Result deleteUser(Long circleId) {
         log.info("退出圈子的id：{}",circleId);
@@ -95,13 +101,27 @@ public class UserCircleController {
 
         return Result.success();
     }
+
+    /**
+     * 查询已加入的圈子信息
+     * @param circlePageQueryDTO
+     * @return
+     */
     @GetMapping("/joined")
     public Result<PageResult>  getJoinedCircle(CirclePageQueryDTO circlePageQueryDTO) {
         log.info("查看已经加入的圈子:{}",circlePageQueryDTO);
-        PageResult pageResult=  circleService.getJoinedCircle(circlePageQueryDTO);
+      PageResult pageResult=  circleService.getJoinedCircle(circlePageQueryDTO);
         return Result.success(pageResult);
     }
+    /**
+     *  查询在某圈子中的身份,返回数字
+     */
+    @GetMapping("/role")
+    public Result<Integer> getRole(Long circleId) {
+        log.info("查询在某圈子中的身份:{},圈子id",circleId);
+        Integer role=circleUserService.getRole(circleId);
+        return Result.success(role);
+    }
 
-    // todo 查询在某圈子中的身份,返回数字
 
 }

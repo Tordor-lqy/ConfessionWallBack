@@ -16,9 +16,17 @@ public interface CircleUserService {
     void updateUserRole(CircleUserDTO circleUserDTO);
 
     Circle getCircleById(Long circleUserId);
+
     /**
      *  删除圈子里的用户（用户退圈）
      * @param circleId
      */
     void deleteUser(Long circleId);
+
+    /**
+     * 获取用户在圈子的身份
+     * @param circleId
+     * @return
+     */
+    Integer getRole(Long circleId);
 }

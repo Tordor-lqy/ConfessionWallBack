@@ -48,7 +48,6 @@ public interface CircleService {
 
     void insertCircle(CircleDTO circleDTO);
 
-    void deleteCircle(CircleDTO circleDTO);
     /**
      * 查询已加入的圈子
      * @param circlePageQueryDTO
@@ -57,5 +56,5 @@ public interface CircleService {
     PageResult getJoinedCircle(CirclePageQueryDTO circlePageQueryDTO);
 
 
-
+    void deleteCircle(CircleDTO circleDTO);
 }

@@ -57,7 +57,7 @@ public class CircleUserServiceImpl implements CircleUserService {
         circleUserMapper.insert(circleUser);
     }
 
-    //根据用户圈中id删除用户
+    //根据用户圈中id删除用
     @Override
     public void delectUserInCircle(Long circleUserId) {
         circleUserMapper.deleteById(circleUserId);
@@ -84,6 +84,7 @@ public class CircleUserServiceImpl implements CircleUserService {
         Circle circle = circleMapper.selectById(circleUser.getCircleId());
         return circle;
     }
+
     /**
      * 用户退圈
      * @param circleId
@@ -96,7 +97,7 @@ public class CircleUserServiceImpl implements CircleUserService {
                 .eq(CircleUser::getCircleId,circleId)
                 .eq(CircleUser::getUserId,userId);
         circleUserMapper.delete(wrapper);
-        //更改圈子人数信息
+    //更改圈子人数信息
         // 先查出圈子对象
         LambdaQueryWrapper<Circle> wr = new LambdaQueryWrapper<Circle>()
                 .select(Circle::getCircleUserCount)
@@ -116,4 +117,22 @@ public class CircleUserServiceImpl implements CircleUserService {
                 .eq(Circle::getCircleId,circleId);
         circleMapper.update(wrapper1);
     }
+
+    /**
+     * 获取用户在圈子的身份
+     * @param circleId
+     * @return
+     */
+    @Override
+    public Integer getRole(Long circleId) {
+        Long userId = BaseContext.getCurrentId();
+        LambdaQueryWrapper<CircleUser> wrapper=new LambdaQueryWrapper<CircleUser>()
+                .select(CircleUser::getCircleUserRole)
+                .eq(CircleUser::getCircleId,circleId)
+                .eq(CircleUser::getUserId,userId);
+        CircleUser circleUser = circleUserMapper.selectOne(wrapper);
+
+        return circleUser.getCircleUserRole();
+    }
+
 }
