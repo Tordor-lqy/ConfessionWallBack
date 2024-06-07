@@ -50,12 +50,12 @@ public class AdminCircleController {
     /**
      * 查看某圈子下所有用户
      * */
-    @GetMapping("/users/{circleId}")
-    @ApiOperation("查看圈子用户")
-    public Result<List<User>> selectAllUser(@ApiParam("圈子circleId") @PathVariable Long circleId){
-        log.info("查看圈子：{} 所有用户",circleId);
-        List<User> list=circleUserService.selectUsersId(circleId);
-        return Result.success(list);
+    @GetMapping("/users")
+    @ApiOperation("分页查看圈子用户")
+    public Result<PageResult> selectAllUser(CirclePageQueryDTO circlePageQueryDTO){
+        log.info("查看圈子：{} 所有用户",circlePageQueryDTO);
+        PageResult pageResult =circleUserService.getUserPage(circlePageQueryDTO);
+        return Result.success(pageResult);
     }
     /**
      * 在圈子中增加用户

@@ -7,6 +7,8 @@ import java.io.Serializable;
 
 @Data
 public class CirclePageQueryDTO implements Serializable {
+    //圈子id
+    private Long circleId;
     //页数
     private Integer p;
     //每页条数

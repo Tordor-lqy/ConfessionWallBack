@@ -1,12 +1,14 @@
 package com.sanding.confessionwallback.service.impl;
 
-import cn.hutool.db.sql.SqlUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sanding.confessionwallback.common.context.BaseContext;
+import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.mapper.CircleMapper;
 import com.sanding.confessionwallback.mapper.CircleUserMapper;
 import com.sanding.confessionwallback.mapper.UserMapper;
+import com.sanding.confessionwallback.pojo.dto.CirclePageQueryDTO;
 import com.sanding.confessionwallback.pojo.dto.CircleUserDTO;
 import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.pojo.entity.CircleUser;
@@ -27,22 +29,6 @@ public class CircleUserServiceImpl implements CircleUserService {
     private UserMapper userMapper;
     @Autowired
     private CircleMapper circleMapper;
-    //查看某圈子下所有用户
-    @Override
-    public List<User> selectUsersId(Long circleId) {
-        //根据圈子id查找与之关联的用户id
-        /**select userId from circleuser表 where circleId=id
-         * */
-        LambdaQueryWrapper<CircleUser> wrapper=new LambdaQueryWrapper<CircleUser>()
-                .select(CircleUser::getUserId)
-                .eq(CircleUser::getCircleId,circleId);
-        List<Long> usersId =circleUserMapper.selectObjs(wrapper);
-        //根据用户id查找用户
-        /**select * from user表 where userId in (usersId)
-         * */
-        List<User> userlist=userMapper.selectBatchIds(usersId);
-        return userlist;
-    }
 
     //增加圈子中的用户
     @Override
@@ -133,6 +119,28 @@ public class CircleUserServiceImpl implements CircleUserService {
         CircleUser circleUser = circleUserMapper.selectOne(wrapper);
 
         return circleUser.getCircleUserRole();
+    }
+
+    @Override
+    public PageResult getUserPage(CirclePageQueryDTO circlePageQueryDTO) {
+        //根据圈子id查找与之关联的用户id
+        /**select userId from circleuser表 where circleId=id
+         * */
+        LambdaQueryWrapper<CircleUser> wrapper1=new LambdaQueryWrapper<CircleUser>()
+                .select(CircleUser::getUserId)
+                .eq(CircleUser::getCircleId,circlePageQueryDTO.getCircleId());
+        List<Long> usersId =circleUserMapper.selectObjs(wrapper1);
+        //根据用户id查找用户
+        // 创建分页对象
+        Page<User> page = new Page<>(circlePageQueryDTO.getP(), circlePageQueryDTO.getS());
+        // 创建查询条件
+        LambdaQueryWrapper<User> wrapper2=new LambdaQueryWrapper<User>()
+                .in(User::getUserId,usersId);
+        // 执行分页查询
+        Page<User> resultPage = userMapper.selectPage(page, wrapper2);
+        // 返回结果
+        return new PageResult(resultPage.getTotal(), resultPage.getRecords());
+
     }
 
 }
