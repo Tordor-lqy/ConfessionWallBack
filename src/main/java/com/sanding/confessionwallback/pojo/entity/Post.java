@@ -19,6 +19,7 @@ public class Post {
     private Long postLikeCount;// 帖子点赞数
     private Long postCommentCount; // 帖子评论回复数
     private String postImgUrls; // 帖子图片URL数组base64编码
+    private Integer postIsDelete; // 帖子是否删除 0-未删除 1-已删除
     private LocalDateTime postUpdateTime; // 帖子更新时间
     private LocalDateTime postCreateTime; // 帖子创建时间
 }
