@@ -10,7 +10,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 @Data
 @TableName("cw_post")
 public class Post {
-
+    public static final Long MO_COMMENT = 0L; //T帖子评论回复数
+    public static final Long MO_LIKE = 0L;  //帖子点赞数
     @TableId(type = IdType.AUTO)
     private Long postId; // 帖子ID 主键
     private Long circleId; // 所属圈子ID

@@ -43,13 +43,13 @@ public class PostUserLikeServiceImpl implements PostUserLikeService {
     public void likePost(Long postId) {
         Long userId = BaseContext.getCurrentId();
         //判断用户是否已点赞
-        LambdaQueryWrapper<PostUserLike> wr = new LambdaQueryWrapper<PostUserLike>()
-                .eq(PostUserLike::getPostId, postId)
-                .eq(PostUserLike::getUserId, userId);
+        LambdaQueryWrapper<PostUserLike> wr=new LambdaQueryWrapper<PostUserLike>()
+                .eq(PostUserLike::getPostId,postId)
+                .eq(PostUserLike::getUserId,userId);
         List<PostUserLike> list = postUserLikeMapper.selectList(wr);
-        if (list.size() > 0) {
-            throw new UserLikeException("您已点赞该帖子");
-        } else {
+        if(list.size()>0){
+            throw  new UserLikeException("您已点赞该帖子");
+        }else {
             //先添加用户帖子关系
             PostUserLike postUserLike = new PostUserLike();
             postUserLike.setPostId(postId);
@@ -80,18 +80,18 @@ public class PostUserLikeServiceImpl implements PostUserLikeService {
         Long userId = BaseContext.getCurrentId();
 
         //判断用户是否已点赞
-        LambdaQueryWrapper<PostUserLike> wr = new LambdaQueryWrapper<PostUserLike>()
-                .eq(PostUserLike::getPostId, postId)
-                .eq(PostUserLike::getUserId, userId);
+        LambdaQueryWrapper<PostUserLike> wr=new LambdaQueryWrapper<PostUserLike>()
+                .eq(PostUserLike::getPostId,postId)
+                .eq(PostUserLike::getUserId,userId);
         List<PostUserLike> list = postUserLikeMapper.selectList(wr);
-        if (list.size() > 0) {
+        if(list.size()>0){
             //解除关系
             Long postUserLikeId = list.get(0).getPostUserLikeId();
             postUserLikeMapper.deleteById(postUserLikeId);
             //帖子点赞数减一
             postMapper.decrementLikeCount(postId);
-        } else {
-            throw new UserLikeException("您并没有点赞该帖子");
+        }else{
+            throw  new UserLikeException("您并没有点赞该帖子");
         }
     }
 
