@@ -1,6 +1,7 @@
 package com.sanding.confessionwallback.controller.user;
 
 import com.sanding.confessionwallback.common.result.Result;
+import com.sanding.confessionwallback.pojo.dto.PostUserLikeDTO;
 import com.sanding.confessionwallback.service.PostCommentService;
 import com.sanding.confessionwallback.service.PostService;
 import com.sanding.confessionwallback.service.PostUserLikeService;
@@ -8,6 +9,7 @@ import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +25,19 @@ public class UserPostController {
     private PostCommentService postCommentService;
     @Autowired
     private PostUserLikeService postUserLikeService;
-    // TODO 用户点赞帖子
+
+    /**
+     * 用户点赞帖子
+     * @return
+     */
+    @PostMapping("/like")
+    public Result likeTopic(Long postId){
+        log.info("用户点赞帖子的id:{}",postId);
+        postUserLikeService.likePost(postId);
+        return  Result.success();
+    }
+
+
     // TODO 用户取消点赞帖子
     // TODO 用户评论帖子
     // TODO 用户删除评论
