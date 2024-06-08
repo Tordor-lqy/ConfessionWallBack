@@ -11,7 +11,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 @TableName("cw_post_comment")
 public class PostComment {
 
-    public static final Integer NO_REPLY = -1;
+    public static final Long NO_REPLY = -1L;  //未回复的评论为-1
+    public static final Long MO_LIKE = 0L; //默认评论点赞数为0
 
     @TableId(type = IdType.AUTO)
     private Long postCommentId; // 主键
@@ -20,6 +21,6 @@ public class PostComment {
     private String commentContent; // 评论内容
     private Long replyCommentId; // 回复评论ID
     private Long commentLikeCount; // 评论点赞数
-    private LocalDateTime createTime; // 创建时间
+    private LocalDateTime postCommentCreateTime; // 创建时间
 
 }

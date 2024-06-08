@@ -1,6 +1,7 @@
 package com.sanding.confessionwallback.controller.user;
 
 import com.sanding.confessionwallback.common.result.Result;
+import com.sanding.confessionwallback.pojo.dto.PostCommentDTO;
 import com.sanding.confessionwallback.pojo.dto.PostUserLikeDTO;
 import com.sanding.confessionwallback.service.PostCommentService;
 import com.sanding.confessionwallback.service.PostService;
@@ -46,7 +47,18 @@ public class UserPostController {
        return Result.success();
     }
 
-    // TODO 用户取消点赞帖子
+    /**
+     *  用户评论帖子
+     * @param postCommentDTO
+     * @return
+     */
+    @PostMapping
+    public  Result commentTopic(@RequestBody PostCommentDTO postCommentDTO){
+        log.info("用户评论帖子的内容:{}",postCommentDTO);
+        postCommentService.commentTopic(postCommentDTO);
+        return  Result.success();
+    }
+
     // TODO 用户评论帖子
     // TODO 用户删除评论
     // TODO 用户新增帖子
