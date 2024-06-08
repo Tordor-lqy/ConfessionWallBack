@@ -12,4 +12,6 @@ public interface PostMapper extends BaseMapper<Post> {
     void decrementLikeCount(@Param("postId") Long postId);
     @Update("update cw_post set post_comment_count = post_comment_count +1 where post_id =#{postId}")
     void insertCommentCount(@Param("postId") Long postId);
+    @Update("update cw_post set post_comment_count = post_comment_count -1 where post_id =#{postId}")
+    void delCommentCount(@Param("postId") Long postId);
 }

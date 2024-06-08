@@ -59,7 +59,12 @@ public class UserPostController {
         return  Result.success();
     }
 
-    // TODO 用户评论帖子
+    @DeleteMapping
+    public   Result delCommentTopic(Long postCommentId){
+        log.info("用户删除评论的id:{}",postCommentId);
+        postCommentService.delCommentTopic(postCommentId);
+        return  Result.success();
+    }
     // TODO 用户删除评论
     // TODO 用户新增帖子
     // TODO 用户删除帖子

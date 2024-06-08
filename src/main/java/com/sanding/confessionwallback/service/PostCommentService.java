@@ -10,5 +10,11 @@ public interface PostCommentService {
      * @param postCommentDTO
      */
     void commentTopic(PostCommentDTO postCommentDTO);
+
+    /**
+     * 用户删除帖子评论
+     * @param postCommentId
+     */
+    void delCommentTopic(Long postCommentId);
     PageResult selectPostComments(PostCommentPageQueryDTO postCommentDTO);
 }

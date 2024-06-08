@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -59,5 +60,27 @@ public class PostCommentServiceImpl implements PostCommentService {
         postMapper.insertCommentCount(postCommentDTO.getPostId());
 
 
+    }
+
+    /**
+     * 用户删除帖子评论
+     * @param postCommentId
+     */
+    @Override
+    @Transactional
+    public void delCommentTopic(Long postCommentId) {
+
+
+        //获取postId
+        LambdaQueryWrapper<PostComment> wrapper=new LambdaQueryWrapper<PostComment>()
+                .select(PostComment::getPostId)
+                .eq(PostComment::getPostCommentId,postCommentId);
+        PostComment postComment=postCommentMapper.selectOne(wrapper);
+        Long postId = postComment.getPostId();
+        //帖子评论数减一
+        postMapper.delCommentCount(postId);
+
+        //解除关系
+        postCommentMapper.deleteById(postCommentId);
     }
 }
