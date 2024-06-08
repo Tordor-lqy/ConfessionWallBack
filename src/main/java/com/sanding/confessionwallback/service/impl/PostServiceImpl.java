@@ -14,7 +14,6 @@ import com.sanding.confessionwallback.service.PostService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -195,5 +194,23 @@ public class PostServiceImpl implements PostService {
         circleMapper.reducePostCount(circleId);
         //最后删除帖子
         postMapper.deleteById(postId);
+    }
+
+    /**用户查询自己的帖子
+     * */
+    @Override
+    public PageResult selectMyPost(PostPageQueryDTO postPageQueryDTO) {
+        Long userId=BaseContext.getCurrentId();
+        //创建分页对象
+        Page<Post> page=new Page<>(postPageQueryDTO.getP(),postPageQueryDTO.getS());
+        // 创建查询条件
+        /**select * from post表 where userId=用户id
+         * */
+        LambdaQueryWrapper<Post> wrapper=new LambdaQueryWrapper<Post>()
+                .eq(Post::getUserId,userId);
+        // 执行分页查询
+        Page<Post> resultPage=postMapper.selectPage(page,wrapper);
+        // 返回结果
+        return new PageResult(resultPage.getTotal(), resultPage.getRecords());
     }
 }

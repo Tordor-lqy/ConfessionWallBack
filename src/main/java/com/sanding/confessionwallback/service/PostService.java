@@ -21,4 +21,6 @@ public interface PostService {
      * @param postId
      */
     void delPost(Long postId);
+
+    PageResult selectMyPost(PostPageQueryDTO postPageQueryDTO);
 }

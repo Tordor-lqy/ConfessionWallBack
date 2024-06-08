@@ -6,7 +6,6 @@ import com.sanding.confessionwallback.pojo.dto.*;
 import com.sanding.confessionwallback.pojo.dto.PostCommentPageQueryDTO;
 import com.sanding.confessionwallback.pojo.dto.PostPageQueryDTO;
 import com.sanding.confessionwallback.pojo.entity.Post;
-import com.sanding.confessionwallback.pojo.entity.PostUserLike;
 import com.sanding.confessionwallback.service.PostCommentService;
 import com.sanding.confessionwallback.service.PostService;
 import com.sanding.confessionwallback.service.PostUserLikeService;
@@ -32,13 +31,27 @@ public class AdminPostController {
     @Autowired
     private PostUserLikeService postUserLikeService;
 
-    // TODO 新增帖子
-    //  List<String>
-    //  (参数：圈子ID ， 话题数组 ，帖子内容 ， 帖子图片url数组base64编码 .... )
-    //  判断话题是否存在，不存在则添加新话题
-    //  然后添加话题和帖子的关系信息
+    /**
+     * 新增帖子
+     */
+    @PostMapping
+    @ApiOperation("新增帖子")
+    public Result savePostTopic(@RequestBody PostDTO postDTO){
+        log.info("新增帖子：{}",postDTO);
+        postService.savePostTopic(postDTO);
+        return  Result.success();
+    }
 
-    // TODO 删除帖子 将字段is_delete改为 1
+    /**
+     * 删除帖子
+     */
+    @DeleteMapping
+    @ApiOperation("删除帖子")
+    public Result delPost(Long postId){
+        log.info("删除帖子的id:{}",postId);
+        postService.delPost(postId);
+        return Result.success();
+    }
 
     // TODO 修改帖子
     /** 条件查询帖子（分页 ， 包含标题搜索 and 圈子ID and 用户ID ....）

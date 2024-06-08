@@ -1,13 +1,16 @@
 package com.sanding.confessionwallback.controller.user;
 
+import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.common.result.Result;
 import com.sanding.confessionwallback.pojo.dto.PostCommentDTO;
 import com.sanding.confessionwallback.pojo.dto.PostDTO;
+import com.sanding.confessionwallback.pojo.dto.PostPageQueryDTO;
 import com.sanding.confessionwallback.pojo.dto.PostUserLikeDTO;
 import com.sanding.confessionwallback.service.PostCommentService;
 import com.sanding.confessionwallback.service.PostService;
 import com.sanding.confessionwallback.service.PostUserLikeService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +98,13 @@ public class UserPostController {
         postService.delPost(postId);
         return Result.success();
     }
-    // TODO 用户删除帖子
-    // TODO 查询自己发布的帖子(分页)
+    /**查询自己发布的帖子(分页)
+    * */
+    @GetMapping
+    @ApiOperation("查询自己发布的帖子")
+    public Result<PageResult> selectMyPost(PostPageQueryDTO postPageQueryDTO){
+        log.info("查询自己发布的帖子");
+        PageResult pageResult=postService.selectMyPost(postPageQueryDTO);
+        return Result.success(pageResult);
+    }
 }
