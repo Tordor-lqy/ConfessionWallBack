@@ -79,9 +79,16 @@ public class AdminPostController {
         return Result.success(pageResult);
     }
 
+    /** 查询帖子的点赞用户列表(分页)
+     * */
+    @GetMapping("/userLike")
+    @ApiOperation("查询帖子的点赞用户列表")
+    public Result<PageResult> selectPostUserLike(PostPageQueryDTO postPageQueryDTO){
+        log.info("查询帖子id:{} 的点赞用户列表",postPageQueryDTO.getPostId());
+        PageResult pageResult=postUserLikeService.selectPostUserLike(postPageQueryDTO);
+        return Result.success(pageResult);
+    }
 
-
-    // TODO 查询帖子的点赞用户列表(分页)
 
     // TODO 移除某用户对某帖子的点赞
 

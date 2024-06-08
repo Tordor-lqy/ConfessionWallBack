@@ -1,5 +1,8 @@
 package com.sanding.confessionwallback.service;
 
+import com.sanding.confessionwallback.common.result.PageResult;
+import com.sanding.confessionwallback.pojo.dto.PostPageQueryDTO;
+
 public interface PostUserLikeService {
     /**
      * 用户点赞帖子
@@ -12,4 +15,6 @@ public interface PostUserLikeService {
      * @param postId
      */
     void delLikeTopic(Long postId);
+
+    PageResult selectPostUserLike(PostPageQueryDTO postPageQueryDTO);
 }

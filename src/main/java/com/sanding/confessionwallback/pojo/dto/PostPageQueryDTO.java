@@ -31,4 +31,6 @@ public class PostPageQueryDTO {
     private LocalDateTime endTime;
     //话题
     private List<String> topicList;
+    //帖子id
+    private Long postId;
 }
