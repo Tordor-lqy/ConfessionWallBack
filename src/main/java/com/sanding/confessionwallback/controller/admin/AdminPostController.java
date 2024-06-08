@@ -1,11 +1,17 @@
 package com.sanding.confessionwallback.controller.admin;
 
+import com.sanding.confessionwallback.common.result.PageResult;
+import com.sanding.confessionwallback.common.result.Result;
+import com.sanding.confessionwallback.pojo.dto.CirclePageQueryDTO;
+import com.sanding.confessionwallback.pojo.dto.PostPageQueryDTO;
 import com.sanding.confessionwallback.service.PostCommentService;
 import com.sanding.confessionwallback.service.PostService;
 import com.sanding.confessionwallback.service.PostUserLikeService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +37,13 @@ public class AdminPostController {
 
     // TODO 修改帖子
 
-    // TODO 条件查询帖子（分页 ， 包含标题搜索 and 圈子ID and 用户ID ....）
+    @GetMapping
+    @ApiOperation("分页条件查询帖子")
+    public Result<PageResult> selectPosts(PostPageQueryDTO postPageQueryDTO){
+        log.info("分页条件查询帖子{}",postPageQueryDTO);
+        PageResult pageResult=postService.selectPosts(postPageQueryDTO);
+        return Result.success(pageResult);
+    }
 
     // TODO 查询单个帖子详情
 
