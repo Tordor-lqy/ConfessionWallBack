@@ -77,4 +77,12 @@ public class PostServiceImpl implements PostService {
         // 返回结果
         return new PageResult(resultPage.getTotal(), resultPage.getRecords());
     }
+
+    /**查询单个帖子详情
+     * */
+    @Override
+    public Post getPostByPostId(Long postId) {
+        Post post=postMapper.selectById(postId);
+        return post;
+    }
 }
