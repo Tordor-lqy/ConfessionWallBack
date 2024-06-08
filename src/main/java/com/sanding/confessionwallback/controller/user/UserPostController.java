@@ -72,13 +72,29 @@ public class UserPostController {
         return  Result.success();
     }
 
+    /**
+     * 用户新增帖子
+     * @param postDTO
+     * @return
+     */
     @PostMapping
     public Result savePostTopic(@RequestBody PostDTO postDTO){
-        log.info("用户新增帖子");
+        log.info("用户新增帖子：{}",postDTO);
         postService.savePostTopic(postDTO);
         return  Result.success();
     }
-    // TODO 用户新增帖子
+
+    /**
+     * 用户删除帖子
+     * @param postId
+     * @return
+     */
+    @DeleteMapping
+    public Result delPost(Long postId){
+        log.info("用户删除帖子的id:{}",postId);
+        postService.delPost(postId);
+        return Result.success();
+    }
     // TODO 用户删除帖子
     // TODO 查询自己发布的帖子(分页)
 }

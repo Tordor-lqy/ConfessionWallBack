@@ -15,4 +15,10 @@ public interface PostService {
      * @param postDTO
      */
     void savePostTopic(PostDTO postDTO);
+
+    /**
+     * 删除帖子
+     * @param postId
+     */
+    void delPost(Long postId);
 }

@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sanding.confessionwallback.common.context.BaseContext;
 import com.sanding.confessionwallback.common.result.PageResult;
-import com.sanding.confessionwallback.mapper.CircleMapper;
-import com.sanding.confessionwallback.mapper.PostMapper;
-import com.sanding.confessionwallback.mapper.TopicMapper;
-import com.sanding.confessionwallback.mapper.TopicPostMapper;
+import com.sanding.confessionwallback.mapper.*;
 import com.sanding.confessionwallback.pojo.dto.PostDTO;
 import com.sanding.confessionwallback.pojo.dto.PostPageQueryDTO;
 import com.sanding.confessionwallback.pojo.entity.*;
@@ -22,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -33,6 +31,10 @@ public class PostServiceImpl implements PostService {
     private TopicPostMapper topicPostMapper;
     @Autowired
     private CircleMapper circleMapper;
+    @Autowired
+    private PostCommentMapper postCommentMapper;
+    @Autowired
+    private PostUserLikeMapper postUserLikeMapper;
     /** 条件查询帖子（分页 ， 包含标题搜索 and 圈子ID and 用户ID ....）
      * */
     @Override
@@ -149,5 +151,49 @@ public class PostServiceImpl implements PostService {
 
         //新增帖子后 圈子帖子数加一
             circleMapper.insertCircleTopicCount(post.getCircleId());
+    }
+
+    /**
+     * 删除帖子
+     * @param postId
+     */
+    @Override
+    public void delPost(Long postId) {
+        //获取圈子所有内容
+        Post post = postMapper.selectById(postId);
+        //删除帖子评论
+        LambdaQueryWrapper<PostComment> wrappe = new LambdaQueryWrapper<PostComment>()
+                .eq(PostComment::getPostId,postId);
+        postCommentMapper.delete(wrappe);
+        //删除所有点赞
+        LambdaQueryWrapper<PostUserLike> wra = new LambdaQueryWrapper<PostUserLike>()
+                .eq(PostUserLike::getPostId,postId);
+        postUserLikeMapper.delete(wra);
+        //减少话题帖子数量，为0时删除话题。
+        List<Long> topicId = topicPostMapper.selectList(new LambdaQueryWrapper<TopicPost>()
+                .eq(TopicPost::getPostId, postId)).stream().map(TopicPost::getTopicId).collect(Collectors.toList());
+        for (Long topicid : topicId) {
+            Topic topic = topicMapper.selectById(topicid);
+            Long topicPostCount = topic.getTopicPostCount();
+            if(topicPostCount>1){
+                LambdaUpdateWrapper<Topic> wrapper1 =new LambdaUpdateWrapper<Topic>()
+                        .set(Topic::getTopicPostCount ,topicPostCount-1)
+                        .eq(Topic::getTopicId,topicid);
+                topicMapper.update(wrapper1);
+            }else{
+                topicMapper.deleteById(topicid);
+            }
+        }
+        //解开关系
+        if(!topicId.isEmpty()){
+        LambdaQueryWrapper<TopicPost> wrapper =new LambdaQueryWrapper<TopicPost>()
+                .in(TopicPost::getTopicId,topicId)
+                .eq(TopicPost::getPostId,postId);
+        topicPostMapper.delete(wrapper);}
+        //圈子帖子数量减一
+        Long circleId = post.getCircleId();
+        circleMapper.reducePostCount(circleId);
+        //最后删除帖子
+        postMapper.deleteById(postId);
     }
 }
