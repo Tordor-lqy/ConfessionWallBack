@@ -41,6 +41,24 @@ public class PostCommentServiceImpl implements PostCommentService {
         // 返回结果
         return new PageResult(resultPage.getTotal(), resultPage.getRecords());
     }
+
+    /** 根据评论ID查询回复(分页)
+     * */
+    @Override
+    public PageResult selectReplyComments(PostCommentPageQueryDTO postCommentPageQueryDTO) {
+        // 创建分页对象
+        Page<PostComment> page = new Page<>(postCommentPageQueryDTO.getP(), postCommentPageQueryDTO.getS());
+        // 创建查询条件
+        /**select * from postcomment表 where postCommentId=评论id
+         * */
+        LambdaQueryWrapper<PostComment> wrapper = new LambdaQueryWrapper<PostComment>();
+        wrapper.eq(PostComment::getPostCommentId,postCommentPageQueryDTO.getPostCommentId());
+        // 执行分页查询
+        Page<PostComment> resultPage = postCommentMapper.selectPage(page, wrapper);
+        // 返回结果
+        return new PageResult(resultPage.getTotal(), resultPage.getRecords());
+    }
+
     /**
      * 用户评论帖子
      * @param postCommentDTO

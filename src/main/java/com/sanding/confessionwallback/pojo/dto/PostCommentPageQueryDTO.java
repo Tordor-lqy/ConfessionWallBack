@@ -11,5 +11,5 @@ public class PostCommentPageQueryDTO {
     //帖子ID
     private  Long postId;
     //评论ID
-    private Long commentId;
+    private Long postCommentId;
 }

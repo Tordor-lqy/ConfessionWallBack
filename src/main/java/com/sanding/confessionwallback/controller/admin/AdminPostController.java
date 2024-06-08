@@ -69,8 +69,17 @@ public class AdminPostController {
         PageResult pageResult=postCommentService.selectPostComments(postCommentPageQueryDTO);
         return Result.success(pageResult);
     }
+    /** 根据评论ID查询回复(分页)
+     * */
+    @GetMapping("/replyComment")
+    @ApiOperation("根据评论ID查询回复")
+    public Result<PageResult> selectReplyComments(PostCommentPageQueryDTO postCommentPageQueryDTO){
+        log.info("根据评论ID:{}查询回复",postCommentPageQueryDTO.getPostCommentId());
+        PageResult pageResult=postCommentService.selectReplyComments(postCommentPageQueryDTO);
+        return Result.success(pageResult);
+    }
 
-    // TODO 根据评论ID查询回复(分页)
+
 
     // TODO 查询帖子的点赞用户列表(分页)
 

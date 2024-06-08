@@ -17,4 +17,6 @@ public interface PostCommentService {
      */
     void delCommentTopic(Long postCommentId);
     PageResult selectPostComments(PostCommentPageQueryDTO postCommentDTO);
+
+    PageResult selectReplyComments(PostCommentPageQueryDTO postCommentPageQueryDTO);
 }
