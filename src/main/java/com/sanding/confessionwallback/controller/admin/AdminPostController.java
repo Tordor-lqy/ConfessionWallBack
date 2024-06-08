@@ -1,7 +1,11 @@
 package com.sanding.confessionwallback.controller.admin;
 
+import com.sanding.confessionwallback.service.PostCommentService;
+import com.sanding.confessionwallback.service.PostService;
+import com.sanding.confessionwallback.service.PostUserLikeService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,6 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Api("帖子操作相关接口")
 @Slf4j
 public class AdminPostController {
+    @Autowired
+    private PostService postService;
+    @Autowired
+    private PostCommentService postCommentService;
+    @Autowired
+    private PostUserLikeService postUserLikeService;
+
     // TODO 新增帖子
     //  List<String>
     //  (参数：圈子ID ， 话题数组 ，帖子内容 ， 帖子图片url数组base64编码 .... )
