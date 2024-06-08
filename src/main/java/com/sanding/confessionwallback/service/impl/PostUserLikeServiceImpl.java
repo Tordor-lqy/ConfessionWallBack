@@ -10,6 +10,7 @@ import com.sanding.confessionwallback.mapper.PostMapper;
 import com.sanding.confessionwallback.mapper.PostUserLikeMapper;
 import com.sanding.confessionwallback.mapper.UserMapper;
 import com.sanding.confessionwallback.pojo.dto.PostPageQueryDTO;
+import com.sanding.confessionwallback.pojo.dto.PostUserLikeDTO;
 import com.sanding.confessionwallback.pojo.entity.Post;
 import com.sanding.confessionwallback.pojo.entity.PostComment;
 import com.sanding.confessionwallback.pojo.entity.PostUserLike;
@@ -127,5 +128,26 @@ public class PostUserLikeServiceImpl implements PostUserLikeService {
 
         }
 
+    }
+
+    /**
+     * 移除某用户对某帖子的点赞
+     */
+    @Override
+    public void AdminDelLikeTopic(PostUserLikeDTO postUserLikeDTO) {
+        //判断用户是否已点赞
+        LambdaQueryWrapper<PostUserLike> wr = new LambdaQueryWrapper<PostUserLike>()
+                .eq(PostUserLike::getPostId, postUserLikeDTO.getPostId())
+                .eq(PostUserLike::getUserId, postUserLikeDTO.getUserId());
+        List<PostUserLike> list = postUserLikeMapper.selectList(wr);
+        if (!list.isEmpty()) {
+            //解除关系
+            Long postUserLikeId = list.get(0).getPostUserLikeId();
+            postUserLikeMapper.deleteById(postUserLikeId);
+            //帖子点赞数减一
+            postMapper.decrementLikeCount(postUserLikeDTO.getPostId());
+        } else {
+            throw new UserLikeException("您并没有点赞该帖子");
+        }
     }
 }

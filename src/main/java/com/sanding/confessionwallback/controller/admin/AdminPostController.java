@@ -2,12 +2,11 @@ package com.sanding.confessionwallback.controller.admin;
 
 import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.common.result.Result;
-import com.sanding.confessionwallback.pojo.dto.CirclePageQueryDTO;
-import com.sanding.confessionwallback.pojo.dto.PostCommentDTO;
+import com.sanding.confessionwallback.pojo.dto.*;
 import com.sanding.confessionwallback.pojo.dto.PostCommentPageQueryDTO;
 import com.sanding.confessionwallback.pojo.dto.PostPageQueryDTO;
-import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.pojo.entity.Post;
+import com.sanding.confessionwallback.pojo.entity.PostUserLike;
 import com.sanding.confessionwallback.service.PostCommentService;
 import com.sanding.confessionwallback.service.PostService;
 import com.sanding.confessionwallback.service.PostUserLikeService;
@@ -15,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -90,7 +90,15 @@ public class AdminPostController {
     }
 
 
-    // TODO 移除某用户对某帖子的点赞
+    /**
+     * 移除某用户对某帖子的点赞
+     */
+    @DeleteMapping("/like")
+    public Result delLikeTopic(PostUserLikeDTO postUserLikeDTO){
+        log.info("移除用户:{}对帖子:{}的点赞",postUserLikeDTO.getUserId(),postUserLikeDTO.getPostId());
+        postUserLikeService.AdminDelLikeTopic(postUserLikeDTO);
+        return Result.success();
+    }
 
 
 }

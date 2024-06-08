@@ -2,6 +2,7 @@ package com.sanding.confessionwallback.service;
 
 import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.pojo.dto.PostPageQueryDTO;
+import com.sanding.confessionwallback.pojo.dto.PostUserLikeDTO;
 
 public interface PostUserLikeService {
     /**
@@ -17,4 +18,6 @@ public interface PostUserLikeService {
     void delLikeTopic(Long postId);
 
     PageResult selectPostUserLike(PostPageQueryDTO postPageQueryDTO);
+
+    void AdminDelLikeTopic(PostUserLikeDTO postUserLikeDTO);
 }
