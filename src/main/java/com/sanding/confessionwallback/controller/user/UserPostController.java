@@ -17,4 +17,5 @@ public class UserPostController {
     // TODO 用户删除评论
     // TODO 用户新增帖子
     // TODO 用户删除帖子
+    // TODO 查询自己发布的帖子
 }
