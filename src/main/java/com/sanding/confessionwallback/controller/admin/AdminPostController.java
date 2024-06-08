@@ -52,8 +52,19 @@ public class AdminPostController {
         postService.delPost(postId);
         return Result.success();
     }
+    /**
+     * 修改帖子
+     * @param postDTO
+     * @return
+     */
+    @PutMapping
+    @ApiOperation("修改帖子")
+    public  Result  update(@RequestBody  PostDTO postDTO){
+        log.info("修改帖子{}",postDTO);
+        postService.update(postDTO);
+            return Result.success();
+    }
 
-    // TODO 修改帖子
     /** 条件查询帖子（分页 ， 包含标题搜索 and 圈子ID and 用户ID ....）
      * */
     @GetMapping

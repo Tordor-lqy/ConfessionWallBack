@@ -22,5 +22,11 @@ public interface PostService {
      */
     void delPost(Long postId);
 
+    /**
+     * 修改帖子
+     * @param postDTO
+     */
+    void update(PostDTO postDTO);
+
     PageResult selectMyPost(PostPageQueryDTO postPageQueryDTO);
 }

@@ -196,6 +196,74 @@ public class PostServiceImpl implements PostService {
         postMapper.deleteById(postId);
     }
 
+    /**
+     * 修改帖子
+     * @param postDTO
+     */
+    @Override
+    public void update(PostDTO postDTO) {
+        //更新帖子信息
+      LambdaUpdateWrapper<Post> wrapper=new LambdaUpdateWrapper<Post>()
+              .set(postDTO.getCircleId()!=null ,Post::getCircleId,postDTO.getCircleId())
+              .set(postDTO.getUserId()!=null ,Post::getUserId,postDTO.getUserId())
+              .set(Post::getPostUpdateTime,LocalDateTime.now())
+              .set(postDTO.getPostImgUrls()!=null && postDTO.getPostImgUrls()!="" ,Post::getPostImgUrls,postDTO.getPostImgUrls())
+              .set(postDTO.getPostContent()!=null && postDTO.getPostContent()!="",Post::getPostContent,postDTO.getPostContent())
+              .eq(Post::getPostId,postDTO.getPostId());
+        postMapper.update(wrapper);
+        //删除所有话题，重新添加
+
+        //减少话题帖子数量，为0时删除话题。
+        List<Long> topicId = topicPostMapper.selectList(new LambdaQueryWrapper<TopicPost>()
+                .eq(TopicPost::getPostId,postDTO.getPostId())).stream().map(TopicPost::getTopicId).collect(Collectors.toList());
+        for (Long topicid : topicId) {
+            Topic topic = topicMapper.selectById(topicid);
+            Long topicPostCount = topic.getTopicPostCount();
+            if(topicPostCount>1){
+                LambdaUpdateWrapper<Topic> wrapper1 =new LambdaUpdateWrapper<Topic>()
+                        .set(Topic::getTopicPostCount ,topicPostCount-1)
+                        .eq(Topic::getTopicId,topicid);
+                topicMapper.update(wrapper1);
+            }else{
+                topicMapper.deleteById(topicid);
+            }
+        }
+        //解开关系
+        if(!topicId.isEmpty()){
+            LambdaQueryWrapper<TopicPost> wra =new LambdaQueryWrapper<TopicPost>()
+                    .in(TopicPost::getTopicId,topicId)
+                    .eq(TopicPost::getPostId,postDTO.getPostId());
+            topicPostMapper.delete(wra);}
+        //重新添加
+        List<String> topicList = postDTO.getTopicList();
+        for (String topic:
+                topicList) {
+            LambdaQueryWrapper<Topic> wr=new LambdaQueryWrapper<Topic>()
+                    .eq(Topic::getTopicName,topic);
+            Topic tp = topicMapper.selectOne(wr);
+            if(tp==null){
+                //创建新话题
+                Topic topic1=new Topic();
+                topic1.setTopicName(topic);
+                topic1.setTopicPostCount(Topic.MO_TPCOUNT);
+                topicMapper.insert(topic1);
+                //创建话题帖子关系
+                TopicPost topicPost=new TopicPost();
+                topicPost.setPostId(postDTO.getPostId());
+                topicPost.setTopicId(topic1.getTopicId());
+                topicPostMapper.insert(topicPost);
+            }else{
+                //话题对应帖子数量加一
+                Long topicPostCount = tp.getTopicPostCount()+1;
+
+                LambdaUpdateWrapper<Topic> wrapper1 =new LambdaUpdateWrapper<Topic>()
+                        .set(Topic::getTopicPostCount ,topicPostCount)
+                        .eq(Topic::getTopicId,tp.getTopicId());
+                topicMapper.update(wrapper1);
+            }
+    }
+}
+
     /**用户查询自己的帖子
      * */
     @Override
