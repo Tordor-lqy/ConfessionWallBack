@@ -11,6 +11,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 @TableName("cw_post_comment")
 public class PostComment {
 
+    public static final Integer NO_REPLY = -1;
+
     @TableId(type = IdType.AUTO)
     private Long postCommentId; // 主键
     private Long postId; // 帖子ID
