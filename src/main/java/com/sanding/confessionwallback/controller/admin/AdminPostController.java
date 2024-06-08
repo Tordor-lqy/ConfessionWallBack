@@ -3,6 +3,8 @@ package com.sanding.confessionwallback.controller.admin;
 import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.common.result.Result;
 import com.sanding.confessionwallback.pojo.dto.CirclePageQueryDTO;
+import com.sanding.confessionwallback.pojo.dto.PostCommentDTO;
+import com.sanding.confessionwallback.pojo.dto.PostCommentPageQueryDTO;
 import com.sanding.confessionwallback.pojo.dto.PostPageQueryDTO;
 import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.pojo.entity.Post;
@@ -58,8 +60,15 @@ public class AdminPostController {
         Post post=postService.getPostByPostId(postId);
         return Result.success(post);
     }
-
-    // TODO 查看帖子评论(不考虑回复 ， 分页)
+    /** 查看帖子评论(不考虑回复 ， 分页)
+     * */
+    @GetMapping("/comment")
+    @ApiOperation("分页查看帖子评论")
+    public Result<PageResult> selectPostComments(PostCommentPageQueryDTO postCommentPageQueryDTO){
+        log.info("分页查看帖子{} 的评论",postCommentPageQueryDTO);
+        PageResult pageResult=postCommentService.selectPostComments(postCommentPageQueryDTO);
+        return Result.success(pageResult);
+    }
 
     // TODO 根据评论ID查询回复(分页)
 

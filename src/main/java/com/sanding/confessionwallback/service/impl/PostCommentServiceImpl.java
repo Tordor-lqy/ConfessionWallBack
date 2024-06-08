@@ -1,9 +1,13 @@
 package com.sanding.confessionwallback.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sanding.confessionwallback.common.context.BaseContext;
+import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.mapper.PostCommentMapper;
 import com.sanding.confessionwallback.mapper.PostMapper;
 import com.sanding.confessionwallback.pojo.dto.PostCommentDTO;
+import com.sanding.confessionwallback.pojo.dto.PostCommentPageQueryDTO;
 import com.sanding.confessionwallback.pojo.entity.PostComment;
 import com.sanding.confessionwallback.service.PostCommentService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +24,22 @@ public class PostCommentServiceImpl implements PostCommentService {
     private PostCommentMapper postCommentMapper;
     @Autowired
     private PostMapper postMapper;
+    /** 根据帖子id查看帖子评论
+     * */
+    @Override
+    public PageResult selectPostComments(PostCommentPageQueryDTO postCommentPageQueryDTO) {
+        // 创建分页对象
+        Page<PostComment> page = new Page<>(postCommentPageQueryDTO.getP(), postCommentPageQueryDTO.getS());
+        // 创建查询条件
+        /**select * from postcomment表 where post_id=帖子id
+         * */
+        LambdaQueryWrapper<PostComment> wrapper = new LambdaQueryWrapper<PostComment>();
+        wrapper.eq(PostComment::getPostId,postCommentPageQueryDTO.getPostId());
+        // 执行分页查询
+        Page<PostComment> resultPage = postCommentMapper.selectPage(page, wrapper);
+        // 返回结果
+        return new PageResult(resultPage.getTotal(), resultPage.getRecords());
+    }
     /**
      * 用户评论帖子
      * @param postCommentDTO
