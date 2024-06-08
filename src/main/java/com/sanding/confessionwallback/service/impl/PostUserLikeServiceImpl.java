@@ -56,4 +56,28 @@ public class PostUserLikeServiceImpl implements PostUserLikeService {
             postMapper.update(wrapper1);
         }
     }
+
+    /**
+     * 用户取消点赞帖子
+     * @param postId
+     */
+    @Override
+    public void delLikeTopic(Long postId) {
+        Long userId = BaseContext.getCurrentId();
+
+        //判断用户是否已点赞
+        LambdaQueryWrapper<PostUserLike> wr=new LambdaQueryWrapper<PostUserLike>()
+                .eq(PostUserLike::getPostId,postId)
+                .eq(PostUserLike::getUserId,userId);
+        List<PostUserLike> list = postUserLikeMapper.selectList(wr);
+        if(list.size()>0){
+            //解除关系
+            Long postUserLikeId = list.get(0).getPostUserLikeId();
+            postUserLikeMapper.deleteById(postUserLikeId);
+            //帖子点赞数减一
+            postMapper.decrementLikeCount(postId);
+        }else{
+            throw  new UserLikeException("您并没有点赞该帖子");
+        }
+    }
 }

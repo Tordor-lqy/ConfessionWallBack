@@ -9,10 +9,7 @@ import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user/post")
@@ -37,6 +34,17 @@ public class UserPostController {
         return  Result.success();
     }
 
+    /**
+     * 用户取消点赞评论
+     * @param postId
+     * @return
+     */
+    @DeleteMapping("like")
+    public Result delLikeTopic(Long postId){
+        log.info("用户取消点赞帖子的id:{}",postId);
+        postUserLikeService.delLikeTopic(postId);
+       return Result.success();
+    }
 
     // TODO 用户取消点赞帖子
     // TODO 用户评论帖子
