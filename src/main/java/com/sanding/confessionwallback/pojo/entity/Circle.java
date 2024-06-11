@@ -30,4 +30,6 @@ public class Circle {
     private LocalDateTime circleUpdateTime; // 更新时间
     private Integer circleUserCount; // 用户数量
     private Integer circlePostCount; // 帖子数量
+    private Integer isDelete; // 删除 0 未删除 1
+    private Integer CircleStatus; // 圈子状态 0 正常 1 关闭
 }
