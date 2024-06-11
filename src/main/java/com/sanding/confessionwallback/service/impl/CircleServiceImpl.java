@@ -49,10 +49,12 @@ public  class CircleServiceImpl implements CircleService {
         if (circlePageQueryDTO.getCircleName() != null && !circlePageQueryDTO.getCircleName().isEmpty()) {
             wrapper.like(Circle::getCircleName, circlePageQueryDTO.getCircleName());
         }
-        if (circlePageQueryDTO.getCircleType() != null) {
-            wrapper.eq(Circle::getCircleType, circlePageQueryDTO.getCircleType());
+        if(circlePageQueryDTO.getIsDelete() != null && circlePageQueryDTO.getIsDelete() != -1){
+            wrapper.eq(Circle::getIsDelete,circlePageQueryDTO.getIsDelete());
         }
-
+        if(circlePageQueryDTO.getCircleStatus() != null && circlePageQueryDTO.getCircleStatus() != -1){
+            wrapper.eq(Circle::getCircleStatus , circlePageQueryDTO.getCircleStatus());
+        }
         // 执行分页查询
         Page<Circle> resultPage = circleMapper.selectPage(page, wrapper);
 
@@ -206,8 +208,7 @@ public  class CircleServiceImpl implements CircleService {
         // 创建查询条件
         LambdaQueryWrapper<Circle> wrapper = new LambdaQueryWrapper<Circle>()
                 .in(Circle::getCircleId, joinedCircleIds)
-                .like(circlePageQueryDTO.getCircleName() != null, Circle::getCircleName, circlePageQueryDTO.getCircleName())
-                .eq(circlePageQueryDTO.getCircleType() != null, Circle::getCircleType, circlePageQueryDTO.getCircleType());
+                .like(circlePageQueryDTO.getCircleName() != null, Circle::getCircleName, circlePageQueryDTO.getCircleName());
 
         // 执行分页查询
         Page<Circle> resultPage = circleMapper.selectPage(page, wrapper);
