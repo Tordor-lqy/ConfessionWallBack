@@ -29,7 +29,7 @@ public class UserCircleController {
     @GetMapping
     public Result<PageResult> page(CirclePageQueryDTO circlePageQueryDTO) {
         log.info("分页查询:{}", circlePageQueryDTO);
-        PageResult pageResult = circleService.getPage(circlePageQueryDTO);
+        PageResult pageResult = circleService.userGetPage(circlePageQueryDTO);
         return Result.success(pageResult);
     }
 

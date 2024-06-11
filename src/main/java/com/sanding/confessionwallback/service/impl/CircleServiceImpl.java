@@ -66,6 +66,25 @@ public class CircleServiceImpl implements CircleService {
 
     }
 
+
+    @Override
+    public PageResult userGetPage(CirclePageQueryDTO circlePageQueryDTO) {
+        // 创建分页对象
+        Page<Circle> page = new Page<>(circlePageQueryDTO.getP(), circlePageQueryDTO.getS());
+        // 创建查询条件
+        LambdaQueryWrapper<Circle> wrapper = new LambdaQueryWrapper<>();
+        if (circlePageQueryDTO.getCircleName() != null && !circlePageQueryDTO.getCircleName().isEmpty()) {
+            wrapper.like(Circle::getCircleName, circlePageQueryDTO.getCircleName());
+        }
+        wrapper.eq(Circle::getIsDelete, 0);
+        wrapper.eq(Circle::getCircleStatus , 0);
+        // 执行分页查询
+        Page<Circle> resultPage = circleMapper.selectPage(page, wrapper);
+        // 返回结果
+        return new PageResult(resultPage.getTotal(), resultPage.getRecords());
+
+    }
+
     /**
      * 更新圈子信息
      *

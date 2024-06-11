@@ -13,6 +13,9 @@ public interface CircleService {
      * @return
      */
     PageResult getPage(CirclePageQueryDTO circlePageQueryDTO);
+
+    PageResult userGetPage(CirclePageQueryDTO circlePageQueryDTO);
+
     /**
      * 更新圈子信息
      * @param circleDTO
