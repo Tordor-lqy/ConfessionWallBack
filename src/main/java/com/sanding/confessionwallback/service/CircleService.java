@@ -20,7 +20,7 @@ public interface CircleService {
      */
     void userUpdate(CircleDTO circleDTO);
 
-    void adminUpdate(CircleDTO circleDTO);
+    int adminUpdate(CircleDTO circleDTO);
 
     /**
      * 添加圈子管理

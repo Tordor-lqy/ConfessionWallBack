@@ -91,11 +91,11 @@ public  class CircleServiceImpl implements CircleService {
     }
 
     @Override
-    public void adminUpdate(CircleDTO circleDTO) {
+    public int adminUpdate(CircleDTO circleDTO) {
         Circle circle = new Circle();
         BeanUtils.copyProperties(circleDTO, circle);
         circle.setCircleUpdateTime(LocalDateTime.now());
-        circleMapper.updateById(circle);
+        return circleMapper.updateById(circle);
     }
 
     /**
