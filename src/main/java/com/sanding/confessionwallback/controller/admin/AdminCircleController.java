@@ -126,7 +126,7 @@ public class AdminCircleController {
     @PutMapping("/update")
     public Result update(@RequestBody CircleDTO circleDTO) {
         log.info("更新圈子：{}", circleDTO);
-        circleService.update(circleDTO);
+        circleService.adminUpdate(circleDTO);
         return Result.success();
     }
 

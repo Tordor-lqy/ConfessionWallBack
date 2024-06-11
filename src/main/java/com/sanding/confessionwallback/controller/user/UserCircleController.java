@@ -41,7 +41,7 @@ public class UserCircleController {
     @PutMapping
     public Result update(@RequestBody CircleDTO circleDTO) {
         log.info("更新圈子：{}", circleDTO);
-        circleService.update(circleDTO);
+        circleService.userUpdate(circleDTO);
         return Result.success();
     }
     /**

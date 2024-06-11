@@ -68,7 +68,7 @@ public  class CircleServiceImpl implements CircleService {
      * @return
      */
     @Override
-    public void update(CircleDTO circleDTO) {
+    public void userUpdate(CircleDTO circleDTO) {
 
         //通过操作者id查是否为管理员
         Long userId = BaseContext.getCurrentId();
@@ -88,6 +88,14 @@ public  class CircleServiceImpl implements CircleService {
         } else {
             throw new PermissionAuthenticationException("权限不足");
         }
+    }
+
+    @Override
+    public void adminUpdate(CircleDTO circleDTO) {
+        Circle circle = new Circle();
+        BeanUtils.copyProperties(circleDTO, circle);
+        circle.setCircleUpdateTime(LocalDateTime.now());
+        circleMapper.updateById(circle);
     }
 
     /**

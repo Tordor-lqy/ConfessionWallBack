@@ -18,7 +18,10 @@ public interface CircleService {
      * @param circleDTO
      * @return
      */
-    void update(CircleDTO circleDTO);
+    void userUpdate(CircleDTO circleDTO);
+
+    void adminUpdate(CircleDTO circleDTO);
+
     /**
      * 添加圈子管理
      * @param circleUserDTO
@@ -54,7 +57,6 @@ public interface CircleService {
      * @return
      */
     PageResult getJoinedCircle(CirclePageQueryDTO circlePageQueryDTO);
-
 
     void deleteCircle(CircleDTO circleDTO);
 }
