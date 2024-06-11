@@ -6,21 +6,25 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sanding.confessionwallback.common.context.BaseContext;
+import com.sanding.confessionwallback.common.exception.BaseException;
 import com.sanding.confessionwallback.common.exception.PermissionAuthenticationException;
 import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.mapper.CircleMapper;
 import com.sanding.confessionwallback.mapper.CircleUserMapper;
+import com.sanding.confessionwallback.mapper.UserMapper;
 import com.sanding.confessionwallback.pojo.dto.CircleDTO;
 import com.sanding.confessionwallback.pojo.dto.CirclePageQueryDTO;
 import com.sanding.confessionwallback.pojo.dto.CircleUserDTO;
 import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.pojo.entity.CircleUser;
+import com.sanding.confessionwallback.pojo.entity.User;
 import com.sanding.confessionwallback.service.CircleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +38,8 @@ public class CircleServiceImpl implements CircleService {
     private CircleMapper circleMapper;
     @Autowired
     private CircleUserMapper circleUserMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     /**
      * 查看圈子
@@ -77,7 +83,7 @@ public class CircleServiceImpl implements CircleService {
             wrapper.like(Circle::getCircleName, circlePageQueryDTO.getCircleName());
         }
         wrapper.eq(Circle::getIsDelete, 0);
-        wrapper.eq(Circle::getCircleStatus , 0);
+        wrapper.eq(Circle::getCircleStatus, 0);
         // 执行分页查询
         Page<Circle> resultPage = circleMapper.selectPage(page, wrapper);
         // 返回结果
@@ -193,6 +199,13 @@ public class CircleServiceImpl implements CircleService {
     @Override
     public void enterCircle(Long circleId) {
         Long userId = BaseContext.getCurrentId();
+        // 查询是否已经加入该圈子
+        LambdaQueryWrapper<CircleUser> queryWrapper = new LambdaQueryWrapper<CircleUser>();
+        queryWrapper.eq(CircleUser::getUserId, userId).eq(CircleUser::getCircleId, circleId);
+        if (circleUserMapper.selectCount(queryWrapper) > 0) {
+            throw new BaseException("用户已经加入该圈子");
+        }
+
         //用户进圈
         CircleUser circleUser = new CircleUser();
         circleUser.setJoinTime(LocalDateTime.now());

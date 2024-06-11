@@ -73,8 +73,8 @@ public class UserCircleController {
      * @param
      * @return
      */
-    @PostMapping
-    public Result enterCircle(Long circleId) {
+    @PostMapping("/join/{circleId}")
+    public Result enterCircle(@PathVariable Long circleId) {
         log.info("加入圈子的圈子id：{}", circleId);
         circleService.enterCircle(circleId);
         return Result.success();
