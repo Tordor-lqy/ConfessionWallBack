@@ -78,7 +78,7 @@ public class AdminCircleController {
      * 在某圈子中删除某用户
      * */
     @ApiOperation("删除圈中用户")
-    @DeleteMapping("{circleUserId}")
+    @DeleteMapping("/user/{circleUserId}")
     public Result delectUserInCircle(@PathVariable Long circleUserId){
         //1.找到圈子，再删除用户，再更改圈中用户数量和更新时间
         log.info("找到用户所在圈子");
@@ -101,11 +101,11 @@ public class AdminCircleController {
         return Result.success();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{circleId}")
     @ApiOperation("删除圈子")
-    public Result deleteCircle(CircleDTO circleDTO){
-        log.info("删除圈子{}",circleDTO);
-        circleService.deleteCircle(circleDTO);
+    public Result deleteCircle(@PathVariable Long circleId){
+        log.info("删除圈子ID:{}",circleId);
+        circleService.adminDeleteCircle(circleId);
         return Result.success();
     }
 

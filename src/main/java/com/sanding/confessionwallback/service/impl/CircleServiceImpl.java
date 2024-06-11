@@ -25,16 +25,19 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
 @Service
 @Slf4j
-public  class CircleServiceImpl implements CircleService {
+public class CircleServiceImpl implements CircleService {
 
     @Autowired
     private CircleMapper circleMapper;
     @Autowired
     private CircleUserMapper circleUserMapper;
+
     /**
      * 查看圈子
+     *
      * @param circlePageQueryDTO
      * @return
      */
@@ -49,11 +52,11 @@ public  class CircleServiceImpl implements CircleService {
         if (circlePageQueryDTO.getCircleName() != null && !circlePageQueryDTO.getCircleName().isEmpty()) {
             wrapper.like(Circle::getCircleName, circlePageQueryDTO.getCircleName());
         }
-        if(circlePageQueryDTO.getIsDelete() != null && circlePageQueryDTO.getIsDelete() != -1){
-            wrapper.eq(Circle::getIsDelete,circlePageQueryDTO.getIsDelete());
+        if (circlePageQueryDTO.getIsDelete() != null && circlePageQueryDTO.getIsDelete() != -1) {
+            wrapper.eq(Circle::getIsDelete, circlePageQueryDTO.getIsDelete());
         }
-        if(circlePageQueryDTO.getCircleStatus() != null && circlePageQueryDTO.getCircleStatus() != -1){
-            wrapper.eq(Circle::getCircleStatus , circlePageQueryDTO.getCircleStatus());
+        if (circlePageQueryDTO.getCircleStatus() != null && circlePageQueryDTO.getCircleStatus() != -1) {
+            wrapper.eq(Circle::getCircleStatus, circlePageQueryDTO.getCircleStatus());
         }
         // 执行分页查询
         Page<Circle> resultPage = circleMapper.selectPage(page, wrapper);
@@ -62,8 +65,10 @@ public  class CircleServiceImpl implements CircleService {
         return new PageResult(resultPage.getTotal(), resultPage.getRecords());
 
     }
+
     /**
      * 更新圈子信息
+     *
      * @param circleDTO
      * @return
      */
@@ -80,7 +85,7 @@ public  class CircleServiceImpl implements CircleService {
         CircleUser ci = circleUserMapper.selectOne(queryWrapper);
 
         //若是就可以修改
-        if (ci.getCircleUserRole() == CircleUser.SUPER_MANAGER||ci.getCircleUserRole() == CircleUser.MANAGER ) {
+        if (ci.getCircleUserRole() == CircleUser.SUPER_MANAGER || ci.getCircleUserRole() == CircleUser.MANAGER) {
             Circle circle = Circle.builder().circleUpdateTime(LocalDateTime.now()).build();
             BeanUtils.copyProperties(circleDTO, circle);
             circleMapper.updateDong(circle);
@@ -100,6 +105,7 @@ public  class CircleServiceImpl implements CircleService {
 
     /**
      * 添加圈子管理
+     *
      * @param circleUserDTO
      * @return
      */
@@ -128,8 +134,10 @@ public  class CircleServiceImpl implements CircleService {
         }
 
     }
+
     /**
      * 用户更新圈子角色
+     *
      * @param circleUserDTO
      * @return
      */
@@ -156,8 +164,10 @@ public  class CircleServiceImpl implements CircleService {
             throw new PermissionAuthenticationException("权限不足");
         }
     }
+
     /**
      * 用户加入圈子
+     *
      * @param
      * @return
      */
@@ -178,25 +188,26 @@ public  class CircleServiceImpl implements CircleService {
         updateWrapper.setSql("circle_user_count = circle_user_count + 1")
                 .eq(Circle::getCircleId, circleUser.getCircleId());
 
-        circleMapper.update( updateWrapper);
+        circleMapper.update(updateWrapper);
     }
 
     //新增圈子
     @Override
     public void insertCircle(CircleDTO circleDTO) {
-        Circle circle=new Circle();
-        BeanUtils.copyProperties(circleDTO,circle);
+        Circle circle = new Circle();
+        BeanUtils.copyProperties(circleDTO, circle);
         circle.setCircleCreateTime(LocalDateTime.now());
         circle.setCircleUpdateTime(LocalDateTime.now());
         circle.setCircleStatus(0);
         circle.setIsDelete(0);
-        circle.setCirclePostCount(0);
-        circle.setCircleUserCount(0);
+        circle.setCirclePostCount(0L);
+        circle.setCircleUserCount(0L);
         circleMapper.insert(circle);
     }
 
     /**
      * 查询已加入的圈子
+     *
      * @param circlePageQueryDTO
      * @return
      */
@@ -237,28 +248,37 @@ public  class CircleServiceImpl implements CircleService {
         //根据圈子id删除
         circleMapper.deleteById(circleDTO.getCircleId());
         //将用户和圈子的关系也删除
-        LambdaQueryWrapper<CircleUser> wrapper=new LambdaQueryWrapper<CircleUser>()
-                .eq(CircleUser::getCircleId,circleDTO.getCircleId());
+        LambdaQueryWrapper<CircleUser> wrapper = new LambdaQueryWrapper<CircleUser>()
+                .eq(CircleUser::getCircleId, circleDTO.getCircleId());
         circleUserMapper.delete(wrapper);
+    }
+
+    @Override
+    public void adminDeleteCircle(Long circleId) {
+        LambdaUpdateWrapper<Circle> wrapper = new LambdaUpdateWrapper<Circle>()
+                .set(Circle::getIsDelete, 1)
+                .eq(Circle::getCircleId, circleId);
+        circleMapper.update(wrapper);
     }
 
     //更新圈子中的用户数量和更新时间
     @Override
-    public void updateUserCount(Circle circle,boolean flag) {
-        Integer count=circle.getCircleUserCount();
-        circle.setCircleUserCount(flag?count+1:count-1);
+    public void updateUserCount(Circle circle, boolean flag) {
+        Long count = circle.getCircleUserCount();
+        circle.setCircleUserCount(flag ? count + 1 : count - 1);
         circle.setCircleUpdateTime(LocalDateTime.now());
         /**update circle表 set circleUserCount=用户数量 and circleUpdateTime=更新时间 where circleId=圈子id
          * */
-        LambdaUpdateWrapper<Circle> wrapper=new LambdaUpdateWrapper<Circle>()
-                .set(Circle::getCircleUserCount,circle.getCircleUserCount())
-                .set(Circle::getCircleUpdateTime,circle.getCircleUpdateTime())
-                .eq(Circle::getCircleId,circle.getCircleId());
+        LambdaUpdateWrapper<Circle> wrapper = new LambdaUpdateWrapper<Circle>()
+                .set(Circle::getCircleUserCount, circle.getCircleUserCount())
+                .set(Circle::getCircleUpdateTime, circle.getCircleUpdateTime())
+                .eq(Circle::getCircleId, circle.getCircleId());
         circleMapper.update(wrapper);
     }
 
     /**
      * 根据CircleId获取圈子信息
+     *
      * @param circleId
      * @return
      */
@@ -267,8 +287,6 @@ public  class CircleServiceImpl implements CircleService {
         Circle circle = circleMapper.selectById(circleId);
         return circle;
     }
-
-
 
 
 }

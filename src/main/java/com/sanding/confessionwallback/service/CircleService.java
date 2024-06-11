@@ -59,4 +59,7 @@ public interface CircleService {
     PageResult getJoinedCircle(CirclePageQueryDTO circlePageQueryDTO);
 
     void deleteCircle(CircleDTO circleDTO);
+
+
+    void adminDeleteCircle(Long circleId);
 }
