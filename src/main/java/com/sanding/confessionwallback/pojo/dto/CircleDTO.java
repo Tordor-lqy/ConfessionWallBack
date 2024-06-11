@@ -16,7 +16,6 @@ public class CircleDTO implements Serializable {
     private String circleDescription; // 圈子描述
     private String circleAvatar; // 圈子头像
     private String circleBackground; // 圈子背景
-    private String circleType; // 圈子类型
     private Integer isDelete; // 是否删除
     private Integer circleStatus; // 圈子状态
 

@@ -188,6 +188,10 @@ public  class CircleServiceImpl implements CircleService {
         BeanUtils.copyProperties(circleDTO,circle);
         circle.setCircleCreateTime(LocalDateTime.now());
         circle.setCircleUpdateTime(LocalDateTime.now());
+        circle.setCircleStatus(0);
+        circle.setIsDelete(0);
+        circle.setCirclePostCount(0);
+        circle.setCircleUserCount(0);
         circleMapper.insert(circle);
     }
 
