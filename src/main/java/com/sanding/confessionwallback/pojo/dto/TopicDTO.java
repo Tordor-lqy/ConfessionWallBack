@@ -11,7 +11,6 @@ public class TopicDTO {
 
     private Long topicId; // 话题ID
     private String topicName; // 话题名称
-    private Long topicPostCount; // 话题帖子数量
     private Long circleId; //圈子ID
     private Long groupId; // 群组ID
 
