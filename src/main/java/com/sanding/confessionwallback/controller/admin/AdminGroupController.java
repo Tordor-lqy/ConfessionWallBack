@@ -29,10 +29,11 @@ public class AdminGroupController {
 	 */
 	@GetMapping
 	@ApiOperation("条件分页查询所有分组")
-	public PageResult getAllGroup( GroupPageQueryDTO groupPageQueryDTO) {
+	public PageResult page(GroupPageQueryDTO groupPageQueryDTO) {
 		log.info("分页条件查询所有分组{}", groupPageQueryDTO);
 		return groupService.list(groupPageQueryDTO);
 	}
+
 
 	/**
 	 * 新增分组
