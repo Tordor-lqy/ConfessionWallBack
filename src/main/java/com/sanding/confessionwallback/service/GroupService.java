@@ -1,16 +1,23 @@
 package com.sanding.confessionwallback.service;
 
 import com.sanding.confessionwallback.common.result.PageResult;
+import com.sanding.confessionwallback.pojo.dto.GroupDTO;
 import com.sanding.confessionwallback.pojo.dto.GroupPageQueryDTO;
-import com.sanding.confessionwallback.pojo.dto.GroupSaveDTO;
-import com.sanding.confessionwallback.pojo.entity.Group;
+
+import java.util.List;
+
 
 public interface GroupService {
 
 
 	PageResult list(GroupPageQueryDTO groupPageQueryDTO);
 
-	void saveGroup(GroupSaveDTO groupSaveDTO);
+	void saveGroup(GroupDTO groupDTO);
 
-	void updateGroup(GroupSaveDTO groupSaveDTO);
+	void updateGroup(GroupDTO groupDTO);
+
+	void deleteById(Long groupId);
+
+	void BatchDeleteById(List<Long> ids);
+
 }

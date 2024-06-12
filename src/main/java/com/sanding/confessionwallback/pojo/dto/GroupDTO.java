@@ -3,7 +3,7 @@ package com.sanding.confessionwallback.pojo.dto;
 import lombok.Data;
 
 @Data
-public class GroupSaveDTO {
+public class GroupDTO {
 	//分组id
 	private Long groupId;
 	//分组名称

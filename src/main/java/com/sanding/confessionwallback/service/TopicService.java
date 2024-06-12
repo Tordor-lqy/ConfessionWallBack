@@ -3,6 +3,9 @@ package com.sanding.confessionwallback.service;
 import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.pojo.dto.TopicDTO;
 import com.sanding.confessionwallback.pojo.dto.TopicPageQueryDTO;
+import com.sanding.confessionwallback.pojo.entity.Topic;
+
+import java.util.List;
 
 public interface TopicService {
     /**
@@ -36,4 +39,6 @@ public interface TopicService {
      * @param topicId
      */
     void deleteByTopicId(Long topicId);
+
+    List<Topic> selectByGroupId(Long groupId);
 }

@@ -21,7 +21,6 @@ import com.sanding.confessionwallback.service.TopicService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -164,5 +163,15 @@ public class TopicServiceImpl implements TopicService {
         }
 
 
+    }
+
+    /*
+     *根据分组id查询话题
+     */
+    public List<Topic> selectByGroupId(Long groupId) {
+        LambdaQueryWrapper<Topic> queryWrapper = new LambdaQueryWrapper<Topic>()
+                .eq(Topic::getGroupId,groupId);
+        List<Topic> list = topicMapper.selectList(queryWrapper);
+        return list;
     }
 }
