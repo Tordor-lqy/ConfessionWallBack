@@ -19,4 +19,5 @@ public class MessageConstant {
     public static final String SAVE_FAILED= "保存失败";
 
 
+    public static final String UPDATE_FAILED = "修改失败";
 }

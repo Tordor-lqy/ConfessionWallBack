@@ -54,8 +54,7 @@ public class GroupServiceImpl implements GroupService {
 	 */
 	@Override
 	public void saveGroup(GroupSaveDTO groupSaveDTO) {
-		Group group = new Group();
-		BeanUtils.copyProperties(groupSaveDTO, group);
+		Group group = BeanToGroup(groupSaveDTO);
 		if (group.getGroupName() == null || group.getGroupName().isEmpty() ||
 		group.getCircleId() == null) {
 			throw new SaveFailException(MessageConstant.SAVE_FAILED);
@@ -72,5 +71,24 @@ public class GroupServiceImpl implements GroupService {
 		}
 		//不存在插入
 		groupMapper.insert(group);
+	}
+
+	/**
+	 * 修改分组
+	 */
+	@Override
+	public void updateGroup(GroupSaveDTO groupSaveDTO) {
+		Group group = BeanToGroup(groupSaveDTO);
+		if (group.getGroupName() == null || group.getGroupName().isEmpty() ||
+				group.getGroupId() == null) {
+			throw new SaveFailException(MessageConstant.UPDATE_FAILED);
+		}
+		groupMapper.updateById(group);
+	}
+
+	private Group BeanToGroup(GroupSaveDTO groupSaveDTO) {
+		Group group = new Group();
+		BeanUtils.copyProperties(groupSaveDTO, group);
+		return group;
 	}
 }

@@ -37,10 +37,20 @@ public class AdminGroupController {
 
 	@PostMapping
 	@ApiOperation("新增分组")
-	private Result saveGroup(@RequestBody GroupSaveDTO groupSaveDTO) {
+	public Result saveGroup(@RequestBody GroupSaveDTO groupSaveDTO) {
 		log.info("新增分组{}", groupSaveDTO);
 		groupService.saveGroup(groupSaveDTO);
 		return Result.success();
 	}
+
+
+	@PutMapping
+	@ApiOperation("修改分组")
+	public Result updateGroup(@RequestBody GroupSaveDTO groupSaveDTO) {
+		log.info("修改分组{}", groupSaveDTO);
+		groupService.updateGroup(groupSaveDTO);
+		return Result.success();
+	}
+
 
 }
