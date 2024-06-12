@@ -62,7 +62,7 @@ public class AdminPostController {
     @ApiOperation("修改帖子")
     public  Result  update(@RequestBody  PostDTO postDTO){
         log.info("修改帖子{}",postDTO);
-        postService.update(postDTO);
+        postService.adminUpdate(postDTO);
             return Result.success();
     }
 

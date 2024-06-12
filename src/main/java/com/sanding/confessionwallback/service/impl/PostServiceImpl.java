@@ -11,13 +11,16 @@ import com.sanding.confessionwallback.pojo.dto.PostDTO;
 import com.sanding.confessionwallback.pojo.dto.PostPageQueryDTO;
 import com.sanding.confessionwallback.pojo.entity.*;
 import com.sanding.confessionwallback.service.PostService;
+import net.sf.jsqlparser.statement.select.Top;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,15 +88,30 @@ public class PostServiceImpl implements PostService {
         }
         // circleName
         if (postPageQueryDTO.getCircleName() != null && !postPageQueryDTO.getCircleName().isEmpty()) {
-            wrapper.like(PostPageQueryDTO.CIRCLE_NAME, postPageQueryDTO.getCircleName());
+            LambdaQueryWrapper<Circle> wrapper1 = new LambdaQueryWrapper<Circle>();
+            List<Long> circleIdList = circleMapper.selectList(wrapper1.like(Circle::getCircleName, postPageQueryDTO.getCircleName())).stream().map(Circle::getCircleId).collect(Collectors.toList());
+            if (circleIdList.isEmpty()) {
+                return new PageResult(0, new ArrayList<>());
+            }
+            wrapper.in(PostPageQueryDTO.CIRCLE_ID, circleIdList);
         }
         // groupName
         if (postPageQueryDTO.getGroupName() != null && !postPageQueryDTO.getGroupName().isEmpty()) {
-            wrapper.like(PostPageQueryDTO.GROUP_NAME, postPageQueryDTO.getGroupName());
+            LambdaQueryWrapper<Group> wrapper1 = new LambdaQueryWrapper<Group>();
+            List<Long> groupIdList = groupMapper.selectList(wrapper1.like(Group::getGroupName, postPageQueryDTO.getGroupName())).stream().map(Group::getGroupId).collect(Collectors.toList());
+            if (groupIdList.isEmpty()) {
+                return new PageResult(0, new ArrayList<>());
+            }
+            wrapper.in(PostPageQueryDTO.GROUP_ID, groupIdList);
         }
         // topicName
         if (postPageQueryDTO.getTopicName() != null && !postPageQueryDTO.getTopicName().isEmpty()) {
-            wrapper.like(PostPageQueryDTO.TOPIC_NAME, postPageQueryDTO.getTopicName());
+            LambdaQueryWrapper<Topic> wrapper1 = new LambdaQueryWrapper<Topic>();
+            List<Long> topicIdList = topicMapper.selectList(wrapper1.like(Topic::getTopicName, postPageQueryDTO.getTopicName())).stream().map(Topic::getTopicId).collect(Collectors.toList());
+            if (topicIdList.isEmpty()) {
+                return new PageResult(0, new ArrayList<>());
+            }
+            wrapper.in(PostPageQueryDTO.TOPIC_ID, topicIdList);
         }
         // delete
         if (postPageQueryDTO.getIsDelete() != null) {
@@ -143,12 +161,15 @@ public class PostServiceImpl implements PostService {
     public void adminSavePOST(PostDTO postDTO) {
         Post post = new Post();
         BeanUtils.copyProperties(postDTO, post);
-        Topic topic = topicMapper.selectOne(new LambdaQueryWrapper<Topic>().eq(Topic::getTopicName, postDTO.getTopicName()));
-        if(topic == null){
+        Topic topic = topicMapper.selectOne(new LambdaQueryWrapper<Topic>()
+                .eq(Topic::getGroupId, postDTO.getGroupId())
+                .eq(Topic::getTopicName, postDTO.getTopicName()));
+        if (topic == null) {
             topic = new Topic();
             topic.setTopicName(postDTO.getTopicName());
             Group group = groupMapper.selectById(postDTO.getGroupId());
             topic.setGroupId(postDTO.getGroupId());
+            topic.setTopicPostCount(1L);
             topic.setCircleId(group.getCircleId());
             topicMapper.insert(topic);
         }
@@ -157,12 +178,9 @@ public class PostServiceImpl implements PostService {
         post.setPostUpdateTime(LocalDateTime.now());
         post.setPostCommentCount(Post.MO_COMMENT);
         post.setPostLikeCount(Post.MO_LIKE);
-        post.setUserId(postDTO.getUserId());
         post.setCircleId(topic.getCircleId());
         post.setGroupId(topic.getGroupId());
         post.setTopicId(topic.getTopicId());
-        post.setPostContent(postDTO.getPostContent());
-        post.setPostTitle(postDTO.getPostTitle());
         post.setIsDelete(0);
         postMapper.insert(post);
 
@@ -221,6 +239,42 @@ public class PostServiceImpl implements PostService {
 //
 //        //新增帖子后 圈子帖子数加一
 //        circleMapper.insertCircleTopicCount(post.getCircleId());
+    }
+
+    @Override
+    public void adminUpdate(PostDTO postDTO) {
+        Post post = postMapper.selectById(postDTO.getPostId());
+
+
+        Topic oldTopic = topicMapper.selectOne(new LambdaQueryWrapper<Topic>()
+                .eq(Topic::getGroupId, post.getGroupId())
+                .eq(Topic::getTopicId, post.getTopicId()));
+        Topic topic = topicMapper.selectOne(new LambdaQueryWrapper<Topic>()
+                .eq(Topic::getGroupId, postDTO.getGroupId())
+                .eq(Topic::getTopicName, postDTO.getTopicName()));
+
+        if (oldTopic != null) {
+            // 更新帖子旧话题数量
+            if (!oldTopic.getTopicName().equals(postDTO.getTopicName()) || !Objects.equals(post.getPostId(), postDTO.getGroupId())) {
+                oldTopic.setTopicPostCount(oldTopic.getTopicPostCount() - 1);
+                topicMapper.updateById(oldTopic);
+            }
+        }
+        // 没有话题则创建新话题
+        if (topic == null) {
+            topic = new Topic();
+            topic.setTopicName(postDTO.getTopicName());
+            Group group = groupMapper.selectById(postDTO.getGroupId());
+            topic.setGroupId(postDTO.getGroupId());
+            topic.setCircleId(group.getCircleId());
+            topic.setTopicPostCount(1L);
+            topicMapper.insert(topic);
+        }
+        // 设置新话题
+        BeanUtils.copyProperties(postDTO, post);
+        post.setTopicId(topic.getTopicId());
+        post.setPostUpdateTime(LocalDateTime.now());
+        postMapper.updateById(post);
     }
 
     /**
@@ -338,7 +392,6 @@ public class PostServiceImpl implements PostService {
 //            }
 //        }
     }
-
 
 
     /**

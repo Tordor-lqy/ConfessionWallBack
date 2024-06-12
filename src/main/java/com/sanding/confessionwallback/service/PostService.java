@@ -30,4 +30,6 @@ public interface PostService {
     void update(PostDTO postDTO);
 
     PageResult selectMyPost(PostPageQueryDTO postPageQueryDTO);
+
+    void adminUpdate(PostDTO postDTO);
 }
