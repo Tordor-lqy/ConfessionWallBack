@@ -6,11 +6,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sanding.confessionwallback.common.exception.TopicException;
 import com.sanding.confessionwallback.common.result.PageResult;
+import com.sanding.confessionwallback.mapper.CircleMapper;
+import com.sanding.confessionwallback.mapper.GroupMapper;
 import com.sanding.confessionwallback.mapper.PostMapper;
 import com.sanding.confessionwallback.mapper.TopicMapper;
 import com.sanding.confessionwallback.pojo.dto.PostPageQueryDTO;
 import com.sanding.confessionwallback.pojo.dto.TopicDTO;
 import com.sanding.confessionwallback.pojo.dto.TopicPageQueryDTO;
+import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.pojo.entity.Group;
 import com.sanding.confessionwallback.pojo.entity.Post;
 import com.sanding.confessionwallback.pojo.entity.Topic;
@@ -20,7 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TopicServiceImpl implements TopicService {
@@ -28,6 +33,10 @@ public class TopicServiceImpl implements TopicService {
     private TopicMapper topicMapper;
     @Autowired
     private PostMapper postMapper;
+    @Autowired
+    private CircleMapper circleMapper;
+    @Autowired
+    private GroupMapper groupMapper;
     /**
      * 分页查询某组话题
      * @param topicPageQueryDTO
@@ -69,7 +78,7 @@ public class TopicServiceImpl implements TopicService {
     }
 
     /**
-     * TODO 分页多表查询待完善
+     *
      * 多条件分页查询话题
      * @param topicPageQueryDTO
      * @return
@@ -92,17 +101,24 @@ public class TopicServiceImpl implements TopicService {
         if (topicPageQueryDTO.getCircleId() != null) {
             wrapper.eq(topicPageQueryDTO.CIRCLE_ID,topicPageQueryDTO.getCircleId());
         }
-        // 标题
-        if (topicPageQueryDTO.getPostTitle() != null && !topicPageQueryDTO.getPostTitle().isEmpty()) {
-            wrapper.like(topicPageQueryDTO.POST_TITLE, topicPageQueryDTO.getPostTitle());
-        }
+
         // circleName
         if (topicPageQueryDTO.getCircleName() != null && !topicPageQueryDTO.getCircleName().isEmpty()) {
-            wrapper.like(topicPageQueryDTO.CIRCLE_NAME, topicPageQueryDTO.getCircleName());
+            LambdaQueryWrapper<Circle> wrapper1 = new LambdaQueryWrapper<Circle>();
+            List<Long> circleIdList = circleMapper.selectList(wrapper1.like(Circle::getCircleName, topicPageQueryDTO.getCircleName())).stream().map(Circle::getCircleId).collect(Collectors.toList());
+            if (circleIdList.isEmpty()) {
+                return new PageResult(0, new ArrayList<>());
+            }
+            wrapper.in(topicPageQueryDTO.CIRCLE_ID, circleIdList);
         }
         // groupName
         if (topicPageQueryDTO.getGroupName() != null && !topicPageQueryDTO.getGroupName().isEmpty()) {
-            wrapper.like(topicPageQueryDTO.GROUP_NAME, topicPageQueryDTO.getGroupName());
+            LambdaQueryWrapper<Group> wrapper1 = new LambdaQueryWrapper<Group>();
+            List<Long> groupIdList = groupMapper.selectList(wrapper1.like(Group::getGroupName, topicPageQueryDTO.getGroupName())).stream().map(Group::getGroupId).collect(Collectors.toList());
+            if (groupIdList.isEmpty()) {
+                return new PageResult(0, new ArrayList<>());
+            }
+            wrapper.in(PostPageQueryDTO.GROUP_ID, groupIdList);
         }
         // topicName
         if (topicPageQueryDTO.getTopicName() != null && !topicPageQueryDTO.getTopicName().isEmpty()) {
