@@ -9,7 +9,7 @@ public class TopicDTO {
 
     public static final long MO_TPCOUNT = 1L;
 
-    private Long topicId; // 话题ID
+        private Long topicId; // 话题ID
     private String topicName; // 话题名称
     private Long circleId; //圈子ID
     private Long groupId; // 群组ID
