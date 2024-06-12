@@ -12,9 +12,17 @@ public class PostPageQueryDTO {
 
     public static final String CIRCLE_ID="circle_id";
     public static final String USER_ID="user_id";
+    public static final String GROUP_ID = "group_id";
+    public static final String TOPIC_ID = "topic_id";
+    public static final String POST_ID="post_id";
+    public static final String POST_TITLE="post_title";
+    public static final String GROUP_NAME = "group_name";
+    public static final String TOPIC_NAME = "topic_name";
+    public static final String CIRCLE_NAME = "circle_name";
     public static final String BEGIN_TIME="post_create_time";
     public static final String END_TIME="post_create_time";
-    public static final String POST_ID="post_id";
+    public static final String IS_DELETE="is_delete";
+
     //页数
     private Integer p;
     //每页条数
@@ -36,7 +44,9 @@ public class PostPageQueryDTO {
     // 话题名称
     private String topicName;
     // 帖子名称
-    private String postName;
+    private String postTitle;
+    // 是否删除
+    private Integer isDelete;
     //开始时间
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime beginTime;
