@@ -23,14 +23,26 @@ public class PostPageQueryDTO {
     private Long circleId;
     //用户ID
     private Long userId;
+    // 分组ID
+    private Long groupId;
+    // 话题ID
+    private Long topicId;
+    // 帖子id
+    private Long postId;
+    // 圈子名称
+    private String circleName;
+    // 分组名称
+    private String groupName;
+    // 话题名称
+    private String topicName;
+    // 帖子名称
+    private String postName;
     //开始时间
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime beginTime;
     //结束时间
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
-    //话题
-    private List<String> topicList;
-    //帖子id
-    private Long postId;
+
+
 }

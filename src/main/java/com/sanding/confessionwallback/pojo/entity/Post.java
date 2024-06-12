@@ -23,4 +23,5 @@ public class Post {
     private Integer postIsDelete; // 帖子是否删除 0-未删除 1-已删除
     private LocalDateTime postUpdateTime; // 帖子更新时间
     private LocalDateTime postCreateTime; // 帖子创建时间
+    private String postTitle; // 帖子标题
 }
