@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @TableName("cw_group")
-public class Goup {
+public class Group {
     @TableId(type = IdType.AUTO)
     private Long groupId; //分组ID
     private String groupName; //分组名称
