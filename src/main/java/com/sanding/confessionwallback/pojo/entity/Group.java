@@ -8,6 +8,12 @@ import lombok.Data;
 @Data
 @TableName("cw_group")
 public class Group {
+    public static final String NOT_FOUND = "分组不存在";
+    public static final String EXIST_TOPIC = "分组下存在话题";
+    public static final String ALREADY_EXISTS = "分组已存在";
+    public static final String SAVE_FAILED= "保存失败";
+
+
     @TableId(type = IdType.AUTO)
     private Long groupId; //分组ID
     private String groupName; //分组名称
