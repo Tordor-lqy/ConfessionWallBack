@@ -35,9 +35,6 @@ public class TopicPageQueryDTO {
     private Long groupId;
     //分组名称
     private String groupName;
-    //帖子ID
-    private Long postId;
-    // 帖子名称
-    private String postTitle;
+
 
 }
