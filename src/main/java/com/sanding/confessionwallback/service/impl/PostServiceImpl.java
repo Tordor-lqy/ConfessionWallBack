@@ -31,6 +31,8 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private CircleMapper circleMapper;
     @Autowired
+    private GroupMapper groupMapper;
+    @Autowired
     private PostCommentMapper postCommentMapper;
     @Autowired
     private PostUserLikeMapper postUserLikeMapper;
@@ -94,7 +96,7 @@ public class PostServiceImpl implements PostService {
             wrapper.like(PostPageQueryDTO.TOPIC_NAME, postPageQueryDTO.getTopicName());
         }
         // delete
-        if(postPageQueryDTO.getIsDelete() != null){
+        if (postPageQueryDTO.getIsDelete() != null) {
             wrapper.eq(PostPageQueryDTO.IS_DELETE, postPageQueryDTO.getIsDelete());
         }
         //话题
@@ -136,6 +138,36 @@ public class PostServiceImpl implements PostService {
         return post;
     }
 
+
+    @Override
+    public void adminSavePOST(PostDTO postDTO) {
+        Post post = new Post();
+        BeanUtils.copyProperties(postDTO, post);
+        Topic topic = topicMapper.selectOne(new LambdaQueryWrapper<Topic>().eq(Topic::getTopicName, postDTO.getTopicName()));
+        if(topic == null){
+            topic = new Topic();
+            topic.setTopicName(postDTO.getTopicName());
+            Group group = groupMapper.selectById(postDTO.getGroupId());
+            topic.setGroupId(postDTO.getGroupId());
+            topic.setCircleId(group.getCircleId());
+            topicMapper.insert(topic);
+        }
+
+        post.setPostCreateTime(LocalDateTime.now());
+        post.setPostUpdateTime(LocalDateTime.now());
+        post.setPostCommentCount(Post.MO_COMMENT);
+        post.setPostLikeCount(Post.MO_LIKE);
+        post.setUserId(postDTO.getUserId());
+        post.setCircleId(topic.getCircleId());
+        post.setGroupId(topic.getGroupId());
+        post.setTopicId(topic.getTopicId());
+        post.setPostContent(postDTO.getPostContent());
+        post.setPostTitle(postDTO.getPostTitle());
+        post.setIsDelete(0);
+        postMapper.insert(post);
+
+    }
+
     /**
      * 用户新增帖子
      * <p>
@@ -149,46 +181,46 @@ public class PostServiceImpl implements PostService {
     //TODO 话题字段
     @Override
     public void savePostTopic(PostDTO postDTO) {
-        Long userId = BaseContext.getCurrentId();
-        Post post = new Post();
-        BeanUtils.copyProperties(postDTO, post);
-        post.setPostCreateTime(LocalDateTime.now());
-        post.setPostUpdateTime(LocalDateTime.now());
-        post.setPostCommentCount(Post.MO_COMMENT);
-        post.setPostLikeCount(Post.MO_LIKE);
-        post.setUserId(userId);
-        postMapper.insert(post);
-        // 判断话题是否存在，不存在则添加新话题
-        List<String> topicList = postDTO.getTopicList();
-        for (String topic :
-                topicList) {
-            LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<Topic>()
-                    .eq(Topic::getTopicName, topic);
-            Topic tp = topicMapper.selectOne(wrapper);
-            if (tp == null) {
-                //创建新话题
-                Topic topic1 = new Topic();
-                topic1.setTopicName(topic);
-                topic1.setTopicPostCount(Topic.MO_TPCOUNT);
-                topicMapper.insert(topic1);
-                //创建话题帖子关系
-                TopicPost topicPost = new TopicPost();
-                topicPost.setPostId(post.getPostId());
-                topicPost.setTopicId(topic1.getTopicId());
-                topicPostMapper.insert(topicPost);
-            } else {
-                //话题对应帖子数量加一
-                Long topicPostCount = tp.getTopicPostCount() + 1;
-
-                LambdaUpdateWrapper<Topic> wrapper1 = new LambdaUpdateWrapper<Topic>()
-                        .set(Topic::getTopicPostCount, topicPostCount)
-                        .eq(Topic::getTopicId, tp.getTopicId());
-                topicMapper.update(wrapper1);
-            }
-        }
-
-        //新增帖子后 圈子帖子数加一
-        circleMapper.insertCircleTopicCount(post.getCircleId());
+//        Long userId = BaseContext.getCurrentId();
+//        Post post = new Post();
+//        BeanUtils.copyProperties(postDTO, post);
+//        post.setPostCreateTime(LocalDateTime.now());
+//        post.setPostUpdateTime(LocalDateTime.now());
+//        post.setPostCommentCount(Post.MO_COMMENT);
+//        post.setPostLikeCount(Post.MO_LIKE);
+//        post.setUserId(userId);
+//        postMapper.insert(post);
+//        // 判断话题是否存在，不存在则添加新话题
+//        List<String> topicList = postDTO.getTopicList();
+//        for (String topic :
+//                topicList) {
+//            LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<Topic>()
+//                    .eq(Topic::getTopicName, topic);
+//            Topic tp = topicMapper.selectOne(wrapper);
+//            if (tp == null) {
+//                //创建新话题
+//                Topic topic1 = new Topic();
+//                topic1.setTopicName(topic);
+//                topic1.setTopicPostCount(Topic.MO_TPCOUNT);
+//                topicMapper.insert(topic1);
+//                //创建话题帖子关系
+//                TopicPost topicPost = new TopicPost();
+//                topicPost.setPostId(post.getPostId());
+//                topicPost.setTopicId(topic1.getTopicId());
+//                topicPostMapper.insert(topicPost);
+//            } else {
+//                //话题对应帖子数量加一
+//                Long topicPostCount = tp.getTopicPostCount() + 1;
+//
+//                LambdaUpdateWrapper<Topic> wrapper1 = new LambdaUpdateWrapper<Topic>()
+//                        .set(Topic::getTopicPostCount, topicPostCount)
+//                        .eq(Topic::getTopicId, tp.getTopicId());
+//                topicMapper.update(wrapper1);
+//            }
+//        }
+//
+//        //新增帖子后 圈子帖子数加一
+//        circleMapper.insertCircleTopicCount(post.getCircleId());
     }
 
     /**
@@ -244,68 +276,70 @@ public class PostServiceImpl implements PostService {
      */
     @Override
     public void update(PostDTO postDTO) {
-        //更新帖子信息
-        LambdaUpdateWrapper<Post> wrapper = new LambdaUpdateWrapper<Post>()
-                .set(postDTO.getCircleId() != null, Post::getCircleId, postDTO.getCircleId())
-                .set(postDTO.getUserId() != null, Post::getUserId, postDTO.getUserId())
-                .set(Post::getPostUpdateTime, LocalDateTime.now())
-                .set(postDTO.getPostImgUrls() != null && postDTO.getPostImgUrls() != "", Post::getPostImgUrls, postDTO.getPostImgUrls())
-                .set(postDTO.getPostContent() != null && postDTO.getPostContent() != "", Post::getPostContent, postDTO.getPostContent())
-                .eq(Post::getPostId, postDTO.getPostId());
-        postMapper.update(wrapper);
-        //删除所有话题，重新添加
-
-        //减少话题帖子数量，为0时删除话题。
-        List<Long> topicId = topicPostMapper.selectList(new LambdaQueryWrapper<TopicPost>()
-                .eq(TopicPost::getPostId, postDTO.getPostId())).stream().map(TopicPost::getTopicId).collect(Collectors.toList());
-        for (Long topicid : topicId) {
-            Topic topic = topicMapper.selectById(topicid);
-            Long topicPostCount = topic.getTopicPostCount();
-            if (topicPostCount > 1) {
-                LambdaUpdateWrapper<Topic> wrapper1 = new LambdaUpdateWrapper<Topic>()
-                        .set(Topic::getTopicPostCount, topicPostCount - 1)
-                        .eq(Topic::getTopicId, topicid);
-                topicMapper.update(wrapper1);
-            } else {
-                topicMapper.deleteById(topicid);
-            }
-        }
-        //解开关系
-        if (!topicId.isEmpty()) {
-            LambdaQueryWrapper<TopicPost> wra = new LambdaQueryWrapper<TopicPost>()
-                    .in(TopicPost::getTopicId, topicId)
-                    .eq(TopicPost::getPostId, postDTO.getPostId());
-            topicPostMapper.delete(wra);
-        }
-        //重新添加
-        List<String> topicList = postDTO.getTopicList();
-        for (String topic :
-                topicList) {
-            LambdaQueryWrapper<Topic> wr = new LambdaQueryWrapper<Topic>()
-                    .eq(Topic::getTopicName, topic);
-            Topic tp = topicMapper.selectOne(wr);
-            if (tp == null) {
-                //创建新话题
-                Topic topic1 = new Topic();
-                topic1.setTopicName(topic);
-                topic1.setTopicPostCount(Topic.MO_TPCOUNT);
-                topicMapper.insert(topic1);
-                //创建话题帖子关系
-                TopicPost topicPost = new TopicPost();
-                topicPost.setPostId(postDTO.getPostId());
-                topicPost.setTopicId(topic1.getTopicId());
-                topicPostMapper.insert(topicPost);
-            } else {
-                //话题对应帖子数量加一
-                Long topicPostCount = tp.getTopicPostCount() + 1;
-
-                LambdaUpdateWrapper<Topic> wrapper1 = new LambdaUpdateWrapper<Topic>()
-                        .set(Topic::getTopicPostCount, topicPostCount)
-                        .eq(Topic::getTopicId, tp.getTopicId());
-                topicMapper.update(wrapper1);
-            }
-        }
+//        //更新帖子信息
+//        LambdaUpdateWrapper<Post> wrapper = new LambdaUpdateWrapper<Post>()
+//                .set(postDTO.getCircleId() != null, Post::getCircleId, postDTO.getCircleId())
+//                .set(postDTO.getUserId() != null, Post::getUserId, postDTO.getUserId())
+//                .set(Post::getPostUpdateTime, LocalDateTime.now())
+//                .set(postDTO.getPostImgUrls() != null && postDTO.getPostImgUrls() != "", Post::getPostImgUrls, postDTO.getPostImgUrls())
+//                .set(postDTO.getPostContent() != null && postDTO.getPostContent() != "", Post::getPostContent, postDTO.getPostContent())
+//                .eq(Post::getPostId, postDTO.getPostId());
+//        postMapper.update(wrapper);
+//        //删除所有话题，重新添加
+//
+//        //减少话题帖子数量，为0时删除话题。
+//        List<Long> topicId = topicPostMapper.selectList(new LambdaQueryWrapper<TopicPost>()
+//                .eq(TopicPost::getPostId, postDTO.getPostId())).stream().map(TopicPost::getTopicId).collect(Collectors.toList());
+//        for (Long topicid : topicId) {
+//            Topic topic = topicMapper.selectById(topicid);
+//            Long topicPostCount = topic.getTopicPostCount();
+//            if (topicPostCount > 1) {
+//                LambdaUpdateWrapper<Topic> wrapper1 = new LambdaUpdateWrapper<Topic>()
+//                        .set(Topic::getTopicPostCount, topicPostCount - 1)
+//                        .eq(Topic::getTopicId, topicid);
+//                topicMapper.update(wrapper1);
+//            } else {
+//                topicMapper.deleteById(topicid);
+//            }
+//        }
+//        //解开关系
+//        if (!topicId.isEmpty()) {
+//            LambdaQueryWrapper<TopicPost> wra = new LambdaQueryWrapper<TopicPost>()
+//                    .in(TopicPost::getTopicId, topicId)
+//                    .eq(TopicPost::getPostId, postDTO.getPostId());
+//            topicPostMapper.delete(wra);
+//        }
+//        //重新添加
+//        List<String> topicList = postDTO.getTopicList();
+//        for (String topic :
+//                topicList) {
+//            LambdaQueryWrapper<Topic> wr = new LambdaQueryWrapper<Topic>()
+//                    .eq(Topic::getTopicName, topic);
+//            Topic tp = topicMapper.selectOne(wr);
+//            if (tp == null) {
+//                //创建新话题
+//                Topic topic1 = new Topic();
+//                topic1.setTopicName(topic);
+//                topic1.setTopicPostCount(Topic.MO_TPCOUNT);
+//                topicMapper.insert(topic1);
+//                //创建话题帖子关系
+//                TopicPost topicPost = new TopicPost();
+//                topicPost.setPostId(postDTO.getPostId());
+//                topicPost.setTopicId(topic1.getTopicId());
+//                topicPostMapper.insert(topicPost);
+//            } else {
+//                //话题对应帖子数量加一
+//                Long topicPostCount = tp.getTopicPostCount() + 1;
+//
+//                LambdaUpdateWrapper<Topic> wrapper1 = new LambdaUpdateWrapper<Topic>()
+//                        .set(Topic::getTopicPostCount, topicPostCount)
+//                        .eq(Topic::getTopicId, tp.getTopicId());
+//                topicMapper.update(wrapper1);
+//            }
+//        }
     }
+
+
 
     /**
      * 用户查询自己的帖子

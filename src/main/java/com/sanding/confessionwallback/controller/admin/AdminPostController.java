@@ -38,7 +38,8 @@ public class AdminPostController {
     @ApiOperation("新增帖子")
     public Result savePostTopic(@RequestBody PostDTO postDTO){
         log.info("新增帖子：{}",postDTO);
-        postService.savePostTopic(postDTO);
+//        postService.savePostTopic(postDTO);
+        postService.adminSavePOST(postDTO);
         return  Result.success();
     }
 

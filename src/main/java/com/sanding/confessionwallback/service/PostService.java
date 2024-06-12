@@ -16,6 +16,7 @@ public interface PostService {
      */
     void savePostTopic(PostDTO postDTO);
 
+    void adminSavePOST(PostDTO postDTO);
     /**
      * 删除帖子
      * @param postId

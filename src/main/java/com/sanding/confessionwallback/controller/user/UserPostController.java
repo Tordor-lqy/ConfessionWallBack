@@ -83,7 +83,7 @@ public class UserPostController {
     @PostMapping
     public Result savePostTopic(@RequestBody PostDTO postDTO){
         log.info("用户新增帖子：{}",postDTO);
-        postService.savePostTopic(postDTO);
+//        postService.savePostTopic(postDTO);
         return  Result.success();
     }
 
