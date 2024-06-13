@@ -7,9 +7,11 @@ import com.sanding.confessionwallback.common.exception.BaseException;
 import com.sanding.confessionwallback.common.exception.GroupException;
 import com.sanding.confessionwallback.common.exception.SaveFailException;
 import com.sanding.confessionwallback.common.result.PageResult;
+import com.sanding.confessionwallback.mapper.CircleMapper;
 import com.sanding.confessionwallback.mapper.GroupMapper;
 import com.sanding.confessionwallback.pojo.dto.GroupDTO;
 import com.sanding.confessionwallback.pojo.dto.GroupPageQueryDTO;
+import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.pojo.entity.Group;
 import com.sanding.confessionwallback.pojo.entity.Topic;
 import com.sanding.confessionwallback.service.GroupService;
@@ -30,29 +32,44 @@ public class GroupServiceImpl implements GroupService {
 	@Autowired
 	private TopicService topicService;
 
+	@Autowired
+	private CircleMapper circleMapper;
+
 	/**
 	 * 条件查询所有分组
 	 */
 
 	@Override
 	public PageResult list(GroupPageQueryDTO groupPageQueryDTO) {
+		//根据圈子名称查询圈子Id
+		if (groupPageQueryDTO.getCircleName() != null && !groupPageQueryDTO.getCircleName().isEmpty()) {
+			Circle circle = circleMapper.selectOne(
+					new LambdaQueryWrapper<Circle>()
+							.like(Circle::getCircleName, groupPageQueryDTO.getCircleName())
+			);
+			if (circle != null && circle.getCircleId() != null) {
+				groupPageQueryDTO.setCircleId(circle.getCircleId());
+			}
+		}
+
 		Page<Group> page = new Page<>(groupPageQueryDTO.getP(), groupPageQueryDTO.getS());
 		LambdaQueryWrapper<Group> queryWrapper = new LambdaQueryWrapper<>();
+
 		if (groupPageQueryDTO.getGroupId() != null) {
 			queryWrapper.eq(Group::getGroupId, groupPageQueryDTO.getGroupId());
 		}
-
 		if (groupPageQueryDTO.getGroupName() != null && !groupPageQueryDTO.getGroupName().isEmpty()) {
 			queryWrapper.like(Group::getGroupName, groupPageQueryDTO.getGroupName());
 		}
 
+		groupPageQueryDTO.setCircleName(null);
 		if (groupPageQueryDTO.getCircleId() != null) {
 			queryWrapper.eq(Group::getCircleId, groupPageQueryDTO.getCircleId());
 		}
-
 		if (groupPageQueryDTO.getIsDeleted() != null) {
 			queryWrapper.eq(Group::getIsDeleted, groupPageQueryDTO.getIsDeleted());
 		}
+
 		Page<Group> list = groupMapper.selectPage(page, queryWrapper);
 		return new PageResult(list.getTotal(), list.getRecords());
 	}

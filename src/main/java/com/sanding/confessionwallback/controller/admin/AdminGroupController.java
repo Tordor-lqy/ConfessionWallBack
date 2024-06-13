@@ -1,10 +1,13 @@
 package com.sanding.confessionwallback.controller.admin;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.common.result.Result;
+import com.sanding.confessionwallback.mapper.CircleMapper;
 import com.sanding.confessionwallback.pojo.dto.GroupDTO;
 import com.sanding.confessionwallback.pojo.dto.GroupPageQueryDTO;
+import com.sanding.confessionwallback.pojo.entity.Circle;
 import com.sanding.confessionwallback.service.GroupService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -11,6 +11,8 @@ public class GroupPageQueryDTO {
 	private String groupName;
 	//圈子id
 	private Long circleId;
+	//圈子名称
+	private String circleName;
 	// 分组是否删除
 	private Integer isDeleted;
 	//页数
