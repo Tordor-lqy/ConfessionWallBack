@@ -90,7 +90,14 @@ public class GroupServiceImpl implements GroupService {
 				group.getGroupId() == null) {
 			throw new GroupException(MessageConstant.UPDATE_FAILED);
 		}
-		groupMapper.updateById(group);
+		Group group1 = groupMapper.selectById(group.getGroupId());
+		if (group1 == null) {
+			throw new GroupException(Group.NOT_FOUND);
+		}
+		//若该分组已经删除则无法修改
+		if (group1.getIsDeleted().equals(Group.DELETE)) {
+			throw new GroupException(Group.ALREADY_DELETE);
+		}
 	}
 
 	/**
@@ -99,7 +106,7 @@ public class GroupServiceImpl implements GroupService {
 	@Override
 	public void BatchDeleteById(List<Long> ids) {
 		Group group = new Group();
-		group.setIsDeleted(Group.ALREADY_DELETE);
+		group.setIsDeleted(Group.DELETE);
 		ids.forEach(this::deleteCheck);
 		groupMapper.update(
 				group, new LambdaQueryWrapper<Group>()
