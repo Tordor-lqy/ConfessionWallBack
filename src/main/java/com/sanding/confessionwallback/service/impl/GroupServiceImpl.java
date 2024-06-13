@@ -3,6 +3,7 @@ package com.sanding.confessionwallback.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sanding.confessionwallback.common.constant.MessageConstant;
+import com.sanding.confessionwallback.common.exception.BaseException;
 import com.sanding.confessionwallback.common.exception.GroupException;
 import com.sanding.confessionwallback.common.exception.SaveFailException;
 import com.sanding.confessionwallback.common.result.PageResult;
@@ -93,23 +94,17 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	/**
-	 * 根据分组id删除分组
-	 */
-	@Override
-	public void deleteById(Long groupId) {
-		deleteCheck(groupId);
-		Group group = new Group();
-		group.setGroupId(groupId);
-		groupMapper.deleteById(group);
-	}
-
-	/**
 	 * 批量删除分组
 	 */
 	@Override
 	public void BatchDeleteById(List<Long> ids) {
+		Group group = new Group();
+		group.setIsDeleted(Group.ALREADY_DELETE);
 		ids.forEach(this::deleteCheck);
-		groupMapper.deleteBatchIds(ids);
+		groupMapper.update(
+				group, new LambdaQueryWrapper<Group>()
+						.in(Group::getGroupId, ids)
+		);
 	}
 
 	private Group BeanToGroup(GroupDTO groupDTO) {
@@ -119,15 +114,10 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	private void deleteCheck(Long groupId) {
-		Group group = groupMapper.selectById(groupId);
-		if (group == null) {
-			//分组不存在删除失败
-			throw new GroupException(groupId + Group.NOT_FOUND);
-		}
 		//先检测该分组下是否有话题
 		List<Topic> list = topicService.selectByGroupId(groupId);
-		if (list != null && !list.isEmpty()) {
-			throw new GroupException(Group.EXIST_TOPIC);
+		if(list != null && !list.isEmpty()){
+			throw new BaseException("该分组下存在话题");
 		}
 	}
 }

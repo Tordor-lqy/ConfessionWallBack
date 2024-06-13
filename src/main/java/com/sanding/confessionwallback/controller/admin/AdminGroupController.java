@@ -57,13 +57,6 @@ public class AdminGroupController {
 		return Result.success();
 	}
 
-	@DeleteMapping("/{id}")
-	@ApiOperation("根据删除分组")
-	public Result deleteGroup(@PathVariable Long id) {
-		log.info("删除分组{}", id);
-		groupService.deleteById(id);
-		return Result.success();
-	}
 
 	@DeleteMapping
 	@ApiOperation("根据删除分组")

@@ -16,7 +16,6 @@ public interface GroupService {
 
 	void updateGroup(GroupDTO groupDTO);
 
-	void deleteById(Long groupId);
 
 	void BatchDeleteById(List<Long> ids);
 
