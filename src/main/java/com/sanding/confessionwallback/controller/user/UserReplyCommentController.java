@@ -7,6 +7,7 @@ import com.sanding.confessionwallback.common.result.Result;
 import com.sanding.confessionwallback.pojo.dto.PostCommentDTO;
 import com.sanding.confessionwallback.pojo.dto.PostCommentPageQueryDTO;
 import com.sanding.confessionwallback.pojo.dto.ReplyPostCommentDTO;
+import com.sanding.confessionwallback.pojo.dto.ReplyPostCommentPageQueryDTO;
 import com.sanding.confessionwallback.pojo.entity.PostComment;
 import com.sanding.confessionwallback.pojo.entity.ReplyPostComment;
 import com.sanding.confessionwallback.service.PostCommentService;
@@ -35,5 +36,15 @@ public class UserReplyCommentController {
 		log.info("新增回复{}", replyPostCommentDTO);
 		replyPostCommentService.saveReplyComment(replyPostCommentDTO);
 		return Result.success();
+	}
+
+	@GetMapping
+	@ApiOperation("查看自己发布的回复")
+	public PageResult getMyComment(ReplyPostCommentPageQueryDTO replyPostCommentPageQueryDTO) {
+		Long userId = BaseContext.getCurrentId();
+		log.info("查看用户{}发布的回复", userId);
+		replyPostCommentPageQueryDTO.setUserId(userId);
+		PageResult pageResult = replyPostCommentService.getReplyPostComment(replyPostCommentPageQueryDTO);
+		return pageResult;
 	}
 }

@@ -1,10 +1,13 @@
 package com.sanding.confessionwallback.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sanding.confessionwallback.common.context.BaseContext;
+import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.mapper.PostCommentMapper;
 import com.sanding.confessionwallback.mapper.ReplyPostCommentMapper;
 import com.sanding.confessionwallback.pojo.dto.ReplyPostCommentDTO;
+import com.sanding.confessionwallback.pojo.dto.ReplyPostCommentPageQueryDTO;
 import com.sanding.confessionwallback.pojo.entity.PostComment;
 import com.sanding.confessionwallback.pojo.entity.ReplyPostComment;
 import com.sanding.confessionwallback.service.ReplyPostCommentService;
@@ -53,6 +56,21 @@ public class ReplyPostCommentServiceImpl implements ReplyPostCommentService {
 		replyPostComment.setCreateTime(LocalDateTime.now());
 
 		replyPostCommentMapper.insert(replyPostComment);
+
+	}
+
+	@Override
+	public PageResult getReplyPostComment(ReplyPostCommentPageQueryDTO replyPostCommentPageQueryDTO) {
+		Page<PostComment> page = new Page<>(
+				replyPostCommentPageQueryDTO.getP(),
+				replyPostCommentPageQueryDTO.getS()
+		);
+
+		LambdaQueryWrapper<ReplyPostComment> queryWrapper = new LambdaQueryWrapper<>();
+
+
+
+		return new PageResult(page.getTotal(), page.getRecords());
 
 	}
 }
