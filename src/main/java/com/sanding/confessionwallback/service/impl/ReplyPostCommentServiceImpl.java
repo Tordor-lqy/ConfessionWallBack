@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Service
@@ -58,18 +59,50 @@ public class ReplyPostCommentServiceImpl implements ReplyPostCommentService {
 		replyPostCommentMapper.insert(replyPostComment);
 	}
 
+	/**
+	 * 根据DTO分页查询回复
+	 */
 	@Override
 	public PageResult getReplyPostComment(ReplyPostCommentPageQueryDTO replyPostCommentPageQueryDTO) {
-		Page<PostComment> page = new Page<>(
+		Page<ReplyPostComment> page = new Page<>(
 				replyPostCommentPageQueryDTO.getP(),
 				replyPostCommentPageQueryDTO.getS()
 		);
 
 		LambdaQueryWrapper<ReplyPostComment> queryWrapper = new LambdaQueryWrapper<>();
 
+		if (replyPostCommentPageQueryDTO.getUserId() != null) {
+			queryWrapper.eq(ReplyPostComment::getUserId, replyPostCommentPageQueryDTO.getUserId());
+		}
 
+		queryWrapper.orderByDesc(ReplyPostComment::getCreateTime);
+
+		replyPostCommentMapper.selectPage(page, queryWrapper);
 
 		return new PageResult(page.getTotal(), page.getRecords());
 
 	}
+	/**
+	 * 根据回复id批量删除回复
+	 */
+	@Override
+	public void batchDeleteByPostReplyId(List<Long> replyIds) {
+		replyPostCommentMapper.delete(
+				new LambdaQueryWrapper<ReplyPostComment>()
+						.in(ReplyPostComment::getPostReplyId, replyIds)
+		);
+	}
+
+	/**
+	 * 根据评论的id删除回复
+	 */
+	@Override
+	public void batchDeleteByCommentId(List<Long> postCommentIds) {
+		replyPostCommentMapper.delete(
+				new LambdaQueryWrapper<ReplyPostComment>()
+						.in(ReplyPostComment::getReplyCommentId, postCommentIds)
+		);
+	}
+
+
 }

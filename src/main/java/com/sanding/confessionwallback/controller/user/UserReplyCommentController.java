@@ -47,4 +47,12 @@ public class UserReplyCommentController {
 		PageResult pageResult = replyPostCommentService.getReplyPostComment(replyPostCommentPageQueryDTO);
 		return pageResult;
 	}
+
+	@DeleteMapping
+	@ApiOperation("批量删除自己发布的回复")
+	public Result deleteMyReplyComment(@RequestParam List<Long> ids) {
+		log.info("删除评论ids={}", ids);
+		replyPostCommentService.batchDeleteByPostReplyId(ids);
+		return Result.success();
+	}
 }
