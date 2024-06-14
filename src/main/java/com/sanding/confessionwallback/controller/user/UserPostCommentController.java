@@ -47,7 +47,7 @@ public class UserPostCommentController {
 	@ApiOperation("批量删除自己发布的评论")
 	public Result deleteMyComment(@RequestParam List<Long> ids) {
 		log.info("删除评论ids={}", ids);
-		postCommentService.batchDeleteByCommentId(ids);
+		postCommentService.batchDeleteByPostCommentId(ids);
 		return Result.success();
 	}
 }

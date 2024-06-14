@@ -17,5 +17,5 @@ public interface PostCommentService {
 
     PageResult getPostComment(PostCommentPageQueryDTO postCommentPageQueryDTO);
 
-    void batchDeleteByCommentId(List<Long> ids);
+    void batchDeleteByPostCommentId(List<Long> ids);
 }
