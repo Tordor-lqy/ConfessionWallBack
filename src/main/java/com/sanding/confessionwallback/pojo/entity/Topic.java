@@ -16,4 +16,5 @@ public class Topic {
     private Long topicPostCount; // 话题帖子数量
     private Long circleId; //圈子ID
     private Long groupId; // 群组ID
+    private Integer isDelete; // 是否删除
 }
