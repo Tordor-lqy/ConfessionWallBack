@@ -2,14 +2,13 @@ package com.sanding.confessionwallback.controller.user;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sanding.confessionwallback.common.constant.JwtClaimsConstant;
+import com.sanding.confessionwallback.common.context.BaseContext;
 import com.sanding.confessionwallback.common.properties.JwtProperties;
 import com.sanding.confessionwallback.common.result.Result;
 import com.sanding.confessionwallback.common.utils.JWTUtils;
 import com.sanding.confessionwallback.mapper.UserMapper;
 import com.sanding.confessionwallback.pojo.dto.UserLoginDTO;
-import com.sanding.confessionwallback.pojo.entity.Admin;
 import com.sanding.confessionwallback.pojo.entity.User;
-import com.sanding.confessionwallback.pojo.vo.AdminLoginVO;
 import com.sanding.confessionwallback.pojo.vo.UserLoginVO;
 import com.sanding.confessionwallback.service.UserService;
 import io.swagger.annotations.Api;
@@ -41,12 +40,35 @@ public class UserController {
     public Result<UserLoginVO> login(@RequestBody UserLoginDTO userLoginDTO){
         log.info("登录用户{}",userLoginDTO);
         //UserLoginVO userLoginVO = userService.wxLogin(userLoginDTO);
+        //Map<String,Object> claims = new HashMap<>();
+        //claims.put(JwtClaimsConstant.USER_ID, userLoginVO.getUserId());
+        //claims.put(JwtClaimsConstant.NAME, userLoginVO.getUserName());
+        //userLoginVO.setToken(
+        //        JWTUtils.createJWT(
+        //                jwtProperties.getUserSecretKey(),
+        //                jwtProperties.getUserTtl(),
+        //                claims
+        //        )
+        //);
         //TODO test 模拟用户登录
         UserLoginVO userLoginVO = new UserLoginVO();
         BeanUtils.copyProperties(userMapper.selectOne(
                 new LambdaQueryWrapper<User>()
                         .eq(User::getUserOpenid, OPENID)
         ), userLoginVO);
+        Map<String,Object> claims = new HashMap<>();
+        claims.put(JwtClaimsConstant.USER_ID, userLoginVO.getUserId());
+        claims.put(JwtClaimsConstant.NAME, userLoginVO.getUserName());
+        userLoginVO.setToken(
+                JWTUtils.createJWT(
+                        jwtProperties.getUserSecretKey(),
+                        jwtProperties.getUserTtl(),
+                        claims
+                )
+        );
+        //在controller层赋值userid 测试用后期删除
+        BaseContext.setCurrentId(userLoginVO.getUserId());
+        log.info("登陆成功{}", BaseContext.getCurrentId());
         log.info("登陆成功{}", userLoginVO);
         return Result.success(userLoginVO);
     }

@@ -3,9 +3,9 @@ package com.sanding.confessionwallback.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sanding.confessionwallback.common.constant.MessageConstant;
+import com.sanding.confessionwallback.common.context.BaseContext;
 import com.sanding.confessionwallback.common.enumeration.AdminAndUserStatus;
 import com.sanding.confessionwallback.common.exception.LoginFailedException;
-import com.sanding.confessionwallback.common.utils.UserThreadLocal;
 import com.sanding.confessionwallback.mapper.AdminMapper;
 import com.sanding.confessionwallback.mapper.CircleMapper;
 import com.sanding.confessionwallback.pojo.dto.AdminLoginDTO;
@@ -49,7 +49,7 @@ public class AdminServiceImpl implements AdminService {
             throw new LoginFailedException(MessageConstant.ACCOUNT_LOCKED);
         }
         //绑定线程
-        UserThreadLocal.set(admin.getAdminId());
+        BaseContext.setCurrentId(admin.getAdminId());
 
         return admin;
     }

@@ -39,41 +39,41 @@ public class UserPostController {
         return  Result.success();
     }
 
-    /**
-     * 用户取消点赞评论
-     * @param postId
-     * @return
-     */
-    @DeleteMapping("like")
-    public Result delLikeTopic(Long postId){
-        log.info("用户取消点赞帖子的id:{}",postId);
-        postUserLikeService.delLikeTopic(postId);
-       return Result.success();
-    }
+    ///**
+    // * 用户取消点赞评论
+    // * @param postId
+    // * @return
+    // */
+    //@DeleteMapping("like")
+    //public Result delLikeTopic(Long postId){
+    //    log.info("用户取消点赞帖子的id:{}",postId);
+    //    postUserLikeService.delLikeTopic(postId);
+    //   return Result.success();
+    //}
 
-    /**
-     *  用户评论帖子
-     * @param postCommentDTO
-     * @return
-     */
-    @PostMapping("/commentTopic")
-    public  Result commentTopic(@RequestBody PostCommentDTO postCommentDTO){
-        log.info("用户评论帖子的内容:{}",postCommentDTO);
-        postCommentService.commentTopic(postCommentDTO);
-        return  Result.success();
-    }
+    ///**
+    // *  用户评论帖子
+    // * @param postCommentDTO
+    // * @return
+    // */
+    //@PostMapping("/commentTopic")
+    //public  Result commentTopic(@RequestBody PostCommentDTO postCommentDTO){
+    //    log.info("用户评论帖子的内容:{}",postCommentDTO);
+    //    postCommentService.commentTopic(postCommentDTO);
+    //    return  Result.success();
+    //}
 
-    /**
-     * 用户删除评论
-     * @param postCommentId
-     * @return
-     */
-    @DeleteMapping("/commentTopic")
-    public   Result delCommentTopic(Long postCommentId){
-        log.info("用户删除评论的id:{}",postCommentId);
-        postCommentService.delCommentTopic(postCommentId);
-        return  Result.success();
-    }
+    ///**
+    // * 用户删除评论
+    // * @param postCommentId
+    // * @return
+    // */
+    //@DeleteMapping("/commentTopic")
+    //public   Result delCommentTopic(Long postCommentId){
+    //    log.info("用户删除评论的id:{}",postCommentId);
+    //    postCommentService.delCommentTopic(postCommentId);
+    //    return  Result.success();
+    //}
 
     /**
      * 用户新增帖子

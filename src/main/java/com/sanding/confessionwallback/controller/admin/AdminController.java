@@ -3,12 +3,12 @@ package com.sanding.confessionwallback.controller.admin;
 
 import com.sanding.confessionwallback.common.constant.JwtClaimsConstant;
 import com.sanding.confessionwallback.common.constant.MessageConstant;
+import com.sanding.confessionwallback.common.context.BaseContext;
 import com.sanding.confessionwallback.common.enumeration.AdminAndUserStatus;
 import com.sanding.confessionwallback.common.exception.LoginFailedException;
 import com.sanding.confessionwallback.common.properties.JwtProperties;
 import com.sanding.confessionwallback.common.result.Result;
 import com.sanding.confessionwallback.common.utils.JWTUtils;
-import com.sanding.confessionwallback.common.utils.UserThreadLocal;
 import com.sanding.confessionwallback.pojo.dto.AdminLoginDTO;
 import com.sanding.confessionwallback.pojo.entity.Admin;
 import com.sanding.confessionwallback.pojo.vo.AdminLoginVO;
@@ -77,8 +77,8 @@ public class AdminController {
     @PostMapping("/logout")
     @ApiOperation("员工退出")
     public Result<String> logout() {
-        log.info("用户退出{}", UserThreadLocal.get());
-        UserThreadLocal.remove();
+        log.info("用户退出{}", BaseContext.getCurrentId());
+        BaseContext.removeCurrentId();
         return Result.success();
     }
 

@@ -11,6 +11,7 @@ import com.sanding.confessionwallback.pojo.entity.Group;
 import com.sanding.confessionwallback.service.CircleService;
 import com.sanding.confessionwallback.service.CircleUserService;
 import com.sanding.confessionwallback.service.GroupService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequestMapping("/api/user/group")
+@Api("用户端分组相关接口")
 public class UserGroupController {
     @Autowired
     private GroupService groupService;

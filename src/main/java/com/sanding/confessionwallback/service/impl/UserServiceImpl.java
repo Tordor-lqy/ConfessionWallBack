@@ -2,9 +2,9 @@ package com.sanding.confessionwallback.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sanding.confessionwallback.common.constant.MessageConstant;
+import com.sanding.confessionwallback.common.context.BaseContext;
 import com.sanding.confessionwallback.common.enumeration.AdminAndUserStatus;
 import com.sanding.confessionwallback.common.exception.LoginFailedException;
-import com.sanding.confessionwallback.common.utils.UserThreadLocal;
 import com.sanding.confessionwallback.mapper.UserMapper;
 import com.sanding.confessionwallback.pojo.dto.UserLoginDTO;
 import com.sanding.confessionwallback.pojo.entity.User;
@@ -20,63 +20,61 @@ import java.util.*;
 
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private WeChatService weChatService;
-    @Autowired
-    private UserMapper userMapper;
-    static String DEFAULT_NICKNAME_PREFIX = "圈友";
-    @Override
-    public UserLoginVO wxLogin(UserLoginDTO userLoginDTO) {
-        String openid = getOpenid(userLoginDTO);
-        if(openid == null) {
-            throw new LoginFailedException(MessageConstant.LOGIN_FAILED);
-        }
-        User user = userMapper.selectOne(
-                new LambdaQueryWrapper<User>()
-                        .eq(User::getUserOpenid, openid)
-        );
+	@Autowired
+	private WeChatService weChatService;
+	@Autowired
+	private UserMapper userMapper;
+	static String DEFAULT_NICKNAME_PREFIX = "圈友";
 
-        String phone = getPhone(userLoginDTO);
-        //判断是否为新用户
-        user = user != null ? user : User.builder()
-                .userOpenid(openid)
-                .userIp(null)
-                .userName(DEFAULT_NICKNAME_PREFIX + UUID.randomUUID().toString().replace("-", ""))
-                .userRegisterTime(LocalDateTime.now())
-                .userPhone(phone)
-                .userStatus(AdminAndUserStatus.OCCUPIED.getOrdinal())
-                .build();
-        //判断手机号是否变化
+	@Override
+	public UserLoginVO wxLogin(UserLoginDTO userLoginDTO) {
+		String openid = getOpenid(userLoginDTO);
+		if (openid == null) {
+			throw new LoginFailedException(MessageConstant.LOGIN_FAILED);
+		}
+		User user = userMapper.selectOne(
+				new LambdaQueryWrapper<User>()
+						.eq(User::getUserOpenid, openid)
+		);
 
-        if(AdminAndUserStatus.UNOCCUPIED.getOrdinal().equals(user.getUserStatus())) {
-            //用户被禁用
-            throw new LoginFailedException(MessageConstant.ACCOUNT_UNOCCUPIED);
-        }
+		String phone = getPhone(userLoginDTO);
+		//判断是否为新用户
+		if (user == null) {
+			user = User.builder()
+					.userOpenid(openid)
+					.userIp(null)
+					.userName(DEFAULT_NICKNAME_PREFIX + UUID.randomUUID().toString().replace("-", ""))
+					.userRegisterTime(LocalDateTime.now())
+					.userPhone(phone)
+					.userStatus(AdminAndUserStatus.OCCUPIED.getOrdinal())
+					.build();
+			userMapper.insert(user);
+		}
 
-        if (!phone.equals(user.getUserPhone())) {
-            user.setUserPhone(phone);
-            if(user.getUserId() == null) {
-                userMapper.insert(user);
-            }else {
-                userMapper.updateById(user);
-            }
-        }
+		if (AdminAndUserStatus.UNOCCUPIED.getOrdinal().equals(user.getUserStatus())) {
+			//用户被禁用
+			throw new LoginFailedException(MessageConstant.ACCOUNT_UNOCCUPIED);
+		}
+		//判断手机号是否变化
+		if (!phone.equals(user.getUserPhone())) {
+			user.setUserPhone(phone);
+			userMapper.updateById(user);
+		}
+		//线程绑定(userId)
+		BaseContext.setCurrentId(user.getUserId());
 
-        //线程绑定(userId)
-        UserThreadLocal.set(user.getUserId());
+		UserLoginVO userLoginVO = new UserLoginVO();
+		BeanUtils.copyProperties(user, userLoginVO);
+		return userLoginVO;
+	}
 
-        UserLoginVO userLoginVO = new UserLoginVO();
-        BeanUtils.copyProperties(user, userLoginVO);
-        return userLoginVO;
-    }
+	private String getOpenid(UserLoginDTO userLoginDTO) {
+		return weChatService.wxLogin(userLoginDTO);
+	}
 
-    private String getOpenid (UserLoginDTO userLoginDTO) {
-        return weChatService.wxLogin(userLoginDTO);
-    }
-
-    private String getPhone (UserLoginDTO userLoginDTO) {
-        return weChatService.getPhone(userLoginDTO);
-    }
+	private String getPhone(UserLoginDTO userLoginDTO) {
+		return weChatService.getPhone(userLoginDTO);
+	}
 }

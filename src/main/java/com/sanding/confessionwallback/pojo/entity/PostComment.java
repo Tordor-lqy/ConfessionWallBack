@@ -1,6 +1,7 @@
 package com.sanding.confessionwallback.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -8,6 +9,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 @Data
+@Builder
 @TableName("cw_post_comment")
 public class PostComment {
 

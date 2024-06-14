@@ -42,6 +42,8 @@ public class UserLoginVO implements Serializable {
     private String userIp;
     //用户openId
     private String openid;
+    //token
+    private String token;
 
 
 }
