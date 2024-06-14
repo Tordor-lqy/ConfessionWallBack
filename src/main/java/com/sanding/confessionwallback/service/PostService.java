@@ -21,7 +21,7 @@ public interface PostService {
      * 删除帖子
      * @param postId
      */
-    void delPost(Long postId);
+    void userDelPost(Long postId);
 
     /**
      * 修改帖子
@@ -32,4 +32,6 @@ public interface PostService {
     PageResult selectMyPost(PostPageQueryDTO postPageQueryDTO);
 
     void adminUpdate(PostDTO postDTO);
+
+    void adminDelPost(Long postId);
 }

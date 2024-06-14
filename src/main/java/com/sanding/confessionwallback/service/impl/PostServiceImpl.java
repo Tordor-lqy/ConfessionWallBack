@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sanding.confessionwallback.common.context.BaseContext;
+import com.sanding.confessionwallback.common.exception.BaseException;
 import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.mapper.*;
 import com.sanding.confessionwallback.pojo.dto.PostDTO;
@@ -117,30 +118,6 @@ public class PostServiceImpl implements PostService {
         if (postPageQueryDTO.getIsDelete() != null) {
             wrapper.eq(PostPageQueryDTO.IS_DELETE, postPageQueryDTO.getIsDelete());
         }
-        //话题
-//        if(postPageQueryDTO.getTopicList() != null && !postPageQueryDTO.getTopicList().isEmpty()){
-//            //根据话题名字找话题Id
-//            /**select topicId from topic表 where topicName=话题名
-//             * */
-//            LambdaQueryWrapper<Topic> wrapper1=new LambdaQueryWrapper<Topic>()
-//                    .select(Topic::getTopicId)
-//                    .in(Topic::getTopicName,postPageQueryDTO.getTopicList());
-//            List<Long> topicIds=topicMapper.selectObjs(wrapper1);
-//            //根据话题Id找对应的帖子id
-//            /**select postId from post表 where topicId=话题id
-//             * */
-//            LambdaQueryWrapper<TopicPost> wrapper2=new LambdaQueryWrapper<TopicPost>()
-//                    .in(TopicPost::getTopicId,topicIds);
-//            List<Long> postIds=topicPostMapper.selectObjs(wrapper2);
-//            //根据帖子Id找帖子
-//            /**select post from post表 where postId in 帖子id
-//             * */
-//            if (!postIds.isEmpty()) {
-//                //话题有帖子
-//                wrapper.in(PostPageQueryDTO.POST_ID, postIds);
-//            }
-//            //话题没帖子不构建
-//        }
         // 执行分页查询
         Page<Post> resultPage = postMapper.selectPage(page, wrapper);
         // 返回结果
@@ -163,7 +140,8 @@ public class PostServiceImpl implements PostService {
         BeanUtils.copyProperties(postDTO, post);
         Topic topic = topicMapper.selectOne(new LambdaQueryWrapper<Topic>()
                 .eq(Topic::getGroupId, postDTO.getGroupId())
-                .eq(Topic::getTopicName, postDTO.getTopicName()));
+                .eq(Topic::getTopicName, postDTO.getTopicName())
+                .eq(Topic::getIsDelete, 0));
         if (topic == null) {
             topic = new Topic();
             topic.setTopicName(postDTO.getTopicName());
@@ -186,59 +164,37 @@ public class PostServiceImpl implements PostService {
 
     }
 
-    /**
-     * 用户新增帖子
-     * <p>
-     * //  List<String>
-     * //  (参数：圈子ID ， 话题数组 ，帖子内容 ， 帖子图片url数组base64编码 .... )
-     * //  判断话题是否存在，不存在则添加新话题
-     * //  然后添加话题和帖子的关系信息
-     *
-     * @param postDTO
-     */
-    //TODO 话题字段
+
     @Override
     public void savePostTopic(PostDTO postDTO) {
-//        Long userId = BaseContext.getCurrentId();
-//        Post post = new Post();
-//        BeanUtils.copyProperties(postDTO, post);
-//        post.setPostCreateTime(LocalDateTime.now());
-//        post.setPostUpdateTime(LocalDateTime.now());
-//        post.setPostCommentCount(Post.MO_COMMENT);
-//        post.setPostLikeCount(Post.MO_LIKE);
-//        post.setUserId(userId);
-//        postMapper.insert(post);
-//        // 判断话题是否存在，不存在则添加新话题
-//        List<String> topicList = postDTO.getTopicList();
-//        for (String topic :
-//                topicList) {
-//            LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<Topic>()
-//                    .eq(Topic::getTopicName, topic);
-//            Topic tp = topicMapper.selectOne(wrapper);
-//            if (tp == null) {
-//                //创建新话题
-//                Topic topic1 = new Topic();
-//                topic1.setTopicName(topic);
-//                topic1.setTopicPostCount(Topic.MO_TPCOUNT);
-//                topicMapper.insert(topic1);
-//                //创建话题帖子关系
-//                TopicPost topicPost = new TopicPost();
-//                topicPost.setPostId(post.getPostId());
-//                topicPost.setTopicId(topic1.getTopicId());
-//                topicPostMapper.insert(topicPost);
-//            } else {
-//                //话题对应帖子数量加一
-//                Long topicPostCount = tp.getTopicPostCount() + 1;
-//
-//                LambdaUpdateWrapper<Topic> wrapper1 = new LambdaUpdateWrapper<Topic>()
-//                        .set(Topic::getTopicPostCount, topicPostCount)
-//                        .eq(Topic::getTopicId, tp.getTopicId());
-//                topicMapper.update(wrapper1);
-//            }
-//        }
-//
-//        //新增帖子后 圈子帖子数加一
-//        circleMapper.insertCircleTopicCount(post.getCircleId());
+        Long userId = BaseContext.getCurrentId();
+        Post post = new Post();
+        BeanUtils.copyProperties(postDTO, post);
+        Topic topic = topicMapper.selectOne(new LambdaQueryWrapper<Topic>()
+                .eq(Topic::getGroupId, postDTO.getGroupId())
+                .eq(Topic::getTopicName, postDTO.getTopicName())
+                .eq(Topic::getIsDelete, 0));
+
+        if (topic == null) {
+            topic = new Topic();
+            topic.setTopicName(postDTO.getTopicName());
+            Group group = groupMapper.selectById(postDTO.getGroupId());
+            topic.setGroupId(postDTO.getGroupId());
+            topic.setTopicPostCount(1L);
+            topic.setCircleId(group.getCircleId());
+            topicMapper.insert(topic);
+        }
+        post.setUserId(userId);
+        post.setPostCreateTime(LocalDateTime.now());
+        post.setPostUpdateTime(LocalDateTime.now());
+        post.setPostCommentCount(Post.MO_COMMENT);
+        post.setPostLikeCount(Post.MO_LIKE);
+        post.setCircleId(topic.getCircleId());
+        post.setGroupId(topic.getGroupId());
+        post.setTopicId(topic.getTopicId());
+        post.setIsDelete(0);
+        postMapper.insert(post);
+
     }
 
     @Override
@@ -283,44 +239,55 @@ public class PostServiceImpl implements PostService {
      * @param postId
      */
     @Override
-    public void delPost(Long postId) {
-        //获取圈子所有内容
+    public void userDelPost(Long postId) {
+        Long userId = BaseContext.getCurrentId();
         Post post = postMapper.selectById(postId);
-        //删除帖子评论
+        if (post == null) {
+            throw new BaseException("没有这个帖子");
+        }
+        if (post.getUserId() != userId) {
+            throw new BaseException("无权限删除帖子");
+        }
+        // 删除所有评论
         LambdaQueryWrapper<PostComment> wrappe = new LambdaQueryWrapper<PostComment>()
                 .eq(PostComment::getPostId, postId);
         postCommentMapper.delete(wrappe);
-        //删除所有点赞
         LambdaQueryWrapper<PostUserLike> wra = new LambdaQueryWrapper<PostUserLike>()
                 .eq(PostUserLike::getPostId, postId);
         postUserLikeMapper.delete(wra);
-        //减少话题帖子数量，为0时删除话题。
-        List<Long> topicId = topicPostMapper.selectList(new LambdaQueryWrapper<TopicPost>()
-                .eq(TopicPost::getPostId, postId)).stream().map(TopicPost::getTopicId).collect(Collectors.toList());
-        for (Long topicid : topicId) {
-            Topic topic = topicMapper.selectById(topicid);
-            Long topicPostCount = topic.getTopicPostCount();
-            if (topicPostCount > 1) {
-                LambdaUpdateWrapper<Topic> wrapper1 = new LambdaUpdateWrapper<Topic>()
-                        .set(Topic::getTopicPostCount, topicPostCount - 1)
-                        .eq(Topic::getTopicId, topicid);
-                topicMapper.update(wrapper1);
-            } else {
-                topicMapper.deleteById(topicid);
-            }
-        }
-        //解开关系
-        if (!topicId.isEmpty()) {
-            LambdaQueryWrapper<TopicPost> wrapper = new LambdaQueryWrapper<TopicPost>()
-                    .in(TopicPost::getTopicId, topicId)
-                    .eq(TopicPost::getPostId, postId);
-            topicPostMapper.delete(wrapper);
-        }
+        // 话题帖子数量-1
+        Topic topic = topicMapper.selectOne(new LambdaQueryWrapper<Topic>().eq(Topic::getTopicId, post.getTopicId()));
+        topic.setTopicPostCount(topic.getTopicPostCount() - 1);
+        topicMapper.updateById(topic);
         //圈子帖子数量减一
         Long circleId = post.getCircleId();
         circleMapper.reducePostCount(circleId);
         //最后删除帖子
-        postMapper.deleteById(postId);
+        postMapper.update(new LambdaUpdateWrapper<Post>().set(Post::getIsDelete, 1).eq(Post::getPostId, postId));
+    }
+
+    @Override
+    public void adminDelPost(Long postId) {
+        Post post = postMapper.selectById(postId);
+        if (post == null) {
+            throw new BaseException("没有这个帖子");
+        }
+        // 删除所有评论
+        LambdaQueryWrapper<PostComment> wrappe = new LambdaQueryWrapper<PostComment>()
+                .eq(PostComment::getPostId, postId);
+        postCommentMapper.delete(wrappe);
+        LambdaQueryWrapper<PostUserLike> wra = new LambdaQueryWrapper<PostUserLike>()
+                .eq(PostUserLike::getPostId, postId);
+        postUserLikeMapper.delete(wra);
+        // 话题帖子数量-1
+        Topic topic = topicMapper.selectOne(new LambdaQueryWrapper<Topic>().eq(Topic::getTopicId, post.getTopicId()));
+        topic.setTopicPostCount(topic.getTopicPostCount() - 1);
+        topicMapper.updateById(topic);
+        //圈子帖子数量减一
+        Long circleId = post.getCircleId();
+        circleMapper.reducePostCount(circleId);
+        //最后删除帖子
+        postMapper.update(new LambdaUpdateWrapper<Post>().set(Post::getIsDelete, 1).eq(Post::getPostId, postId));
     }
 
     /**
@@ -406,7 +373,8 @@ public class PostServiceImpl implements PostService {
         /**select * from post表 where userId=用户id
          * */
         LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<Post>()
-                .eq(Post::getUserId, userId);
+                .eq(Post::getUserId, userId)
+                .eq(Post::getIsDelete, 0);
         // 执行分页查询
         Page<Post> resultPage = postMapper.selectPage(page, wrapper);
         // 返回结果

@@ -83,7 +83,7 @@ public class UserPostController {
     @PostMapping
     public Result savePostTopic(@RequestBody PostDTO postDTO){
         log.info("用户新增帖子：{}",postDTO);
-//        postService.savePostTopic(postDTO);
+        postService.savePostTopic(postDTO);
         return  Result.success();
     }
 
@@ -95,7 +95,7 @@ public class UserPostController {
     @DeleteMapping
     public Result delPost(Long postId){
         log.info("用户删除帖子的id:{}",postId);
-        postService.delPost(postId);
+        postService.userDelPost(postId);
         return Result.success();
     }
     /**查询自己发布的帖子(分页)

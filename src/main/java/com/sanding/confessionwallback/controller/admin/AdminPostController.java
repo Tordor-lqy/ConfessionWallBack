@@ -50,7 +50,7 @@ public class AdminPostController {
     @ApiOperation("删除帖子")
     public Result delPost(Long postId){
         log.info("删除帖子的id:{}",postId);
-        postService.delPost(postId);
+        postService.adminDelPost(postId);
         return Result.success();
     }
     /**
