@@ -5,21 +5,17 @@ import com.sanding.confessionwallback.pojo.dto.PostCommentDTO;
 import com.sanding.confessionwallback.pojo.dto.PostCommentPageQueryDTO;
 import com.sanding.confessionwallback.pojo.dto.PostPageQueryDTO;
 
+import java.util.List;
+
 public interface PostCommentService {
-    /**
-     * 用户评论帖子
-     * @param postCommentDTO
-     */
+
+    //void delCommentTopic(Long postCommentId);
+    //PageResult selectPostComments(PostCommentPageQueryDTO postCommentDTO);
+    //PageResult selectReplyComments(PostCommentPageQueryDTO postCommentPageQueryDTO);
+
     void savePostComment(PostCommentDTO postCommentDTO);
 
-    /**
-     * 用户删除帖子评论
-     * @param postCommentId
-     */
-    void delCommentTopic(Long postCommentId);
-    PageResult selectPostComments(PostCommentPageQueryDTO postCommentDTO);
-
-    PageResult selectReplyComments(PostCommentPageQueryDTO postCommentPageQueryDTO);
-
     PageResult getPostComment(PostCommentPageQueryDTO postCommentPageQueryDTO);
+
+    void batchDeleteByCommentId(List<Long> ids);
 }

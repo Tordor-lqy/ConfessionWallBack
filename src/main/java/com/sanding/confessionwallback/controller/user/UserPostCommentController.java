@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @Slf4j
 @RequestMapping("/api/user/postComment")
@@ -39,5 +41,13 @@ public class UserPostCommentController {
 		postCommentPageQueryDTO.setUserId(userId);
 		PageResult pageResult = postCommentService.getPostComment(postCommentPageQueryDTO);
 		return pageResult;
+	}
+
+	@DeleteMapping
+	@ApiOperation("批量删除自己发布的评论")
+	public Result deleteMyComment(@RequestParam List<Long> ids) {
+		log.info("删除评论ids={}", ids);
+		postCommentService.batchDeleteByCommentId(ids);
+		return Result.success();
 	}
 }
