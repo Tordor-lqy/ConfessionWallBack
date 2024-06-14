@@ -98,10 +98,12 @@ public class ReplyPostCommentServiceImpl implements ReplyPostCommentService {
 	 */
 	@Override
 	public void batchDeleteByCommentId(List<Long> postCommentIds) {
+
 		replyPostCommentMapper.delete(
 				new LambdaQueryWrapper<ReplyPostComment>()
 						.in(ReplyPostComment::getReplyCommentId, postCommentIds)
 		);
+
 	}
 
 
