@@ -56,7 +56,6 @@ public class ReplyPostCommentServiceImpl implements ReplyPostCommentService {
 		replyPostComment.setCreateTime(LocalDateTime.now());
 
 		replyPostCommentMapper.insert(replyPostComment);
-
 	}
 
 	@Override
