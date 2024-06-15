@@ -36,5 +36,7 @@ public class TopicPageQueryDTO {
     //分组名称
     private String groupName;
 
+    private Integer isDelete;
+
 
 }

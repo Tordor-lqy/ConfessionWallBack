@@ -1,10 +1,13 @@
 package com.sanding.confessionwallback.pojo.dto;
 
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.sanding.confessionwallback.pojo.entity.Group;
 import lombok.Data;
 
 @Data
 public class GroupPageQueryDTO {
 
+	public static final String CIRCLE_ID = "circle_id";
 	//分组id
 	private Long groupId;
 	//分组名称
