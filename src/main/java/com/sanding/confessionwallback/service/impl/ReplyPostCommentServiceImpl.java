@@ -7,7 +7,6 @@ import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.mapper.PostCommentMapper;
 import com.sanding.confessionwallback.mapper.ReplyPostCommentMapper;
 import com.sanding.confessionwallback.pojo.dto.ReplyPostCommentDTO;
-import com.sanding.confessionwallback.pojo.dto.ReplyPostCommentPageQueryDTO;
 import com.sanding.confessionwallback.pojo.entity.PostComment;
 import com.sanding.confessionwallback.pojo.entity.ReplyPostComment;
 import com.sanding.confessionwallback.service.ReplyPostCommentService;
@@ -75,6 +74,26 @@ public class ReplyPostCommentServiceImpl implements ReplyPostCommentService {
 		return new PageResult(page.getTotal(), page.getRecords());
 
 	}
+
+
+	/**
+	 * 根据评论id分页查询回复
+	 */
+	@Override
+	public PageResult getReplyPostCommentByCommentId(Long commentId, Integer p, Integer s) {
+
+		Page<ReplyPostComment> page = new Page<>(p, s);
+
+		LambdaQueryWrapper<ReplyPostComment> queryWrapper = new LambdaQueryWrapper<ReplyPostComment>()
+				.eq(ReplyPostComment::getReplyCommentId, commentId)
+				.orderByDesc(ReplyPostComment::getCreateTime);
+
+		replyPostCommentMapper.selectPage(page, queryWrapper);
+
+		return new PageResult(page.getTotal(), page.getRecords());
+
+	}
+
 	/**
 	 * 根据回复id批量删除回复
 	 */

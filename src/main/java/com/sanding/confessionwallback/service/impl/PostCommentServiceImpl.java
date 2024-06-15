@@ -203,7 +203,7 @@ public class PostCommentServiceImpl implements PostCommentService {
 	 */
 	@Transactional
 	@Override
-	public void batchDeleteByPostCommentId(List<Long> ids) {
+	public void batchDeleteByPostCommentIdFromUser(List<Long> ids) {
 		Long userId = BaseContext.getCurrentId();
 		postCommentMapper.selectList(new LambdaQueryWrapper<PostComment>()
 						.in(PostComment::getPostCommentId, ids)
@@ -214,6 +214,18 @@ public class PostCommentServiceImpl implements PostCommentService {
 					}
 				}
 		);
+		//1. 删除reply_comment表数据
+		replyPostCommentService.batchDeleteByCommentId(ids);
+		//2. 删除post_comment表数据
+		postCommentMapper.deleteBatchIds(ids);
+	}
+
+	/**
+	 * 根据管理端评论id批量删除评论
+	 */
+	@Transactional
+	@Override
+	public void batchDeleteByPostCommentIdFromAdmin(List<Long> ids) {
 		//1. 删除reply_comment表数据
 		replyPostCommentService.batchDeleteByCommentId(ids);
 		//2. 删除post_comment表数据
