@@ -1,5 +1,6 @@
 package com.sanding.confessionwallback.pojo.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -26,4 +27,6 @@ public class Post {
     private Long groupId; // 帖子所属分组ID
     private Long topicId; // 帖子所属话题ID
     private String postTitle; // 帖子标题
+    @TableField(exist = false)
+    private String topicName;
 }

@@ -30,5 +30,7 @@ public class PostCommentPageQueryDTO {
 	private String postComment;
 	//用户ID
 	private Long userId;
+	//用户名字
+	private String userName;
 
 }

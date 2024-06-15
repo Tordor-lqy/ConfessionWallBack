@@ -1,5 +1,6 @@
 package com.sanding.confessionwallback.pojo.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -17,4 +18,6 @@ public class Topic {
     private Long circleId; //圈子ID
     private Long groupId; // 群组ID
     private Integer isDelete; // 是否删除
+    @TableField(exist = false)
+    private String groupName; //群组名字
 }
