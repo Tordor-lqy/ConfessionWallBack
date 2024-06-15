@@ -30,7 +30,7 @@ public class AdminPostCommentController {
 
 	@DeleteMapping
 	@ApiOperation("批量删除评论")
-	public Result batchDeletePostComment(@RequestParam List<Long> ids) {
+	public Result batchDeletePostComment(@RequestParam("ids") List<Long> ids) {
 		log.info("删除评论{}", ids);
 		postCommentService.batchDeleteByPostCommentIdFromAdmin(ids);
 		return Result.success();

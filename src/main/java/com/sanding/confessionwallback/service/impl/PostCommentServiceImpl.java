@@ -28,8 +28,6 @@ public class PostCommentServiceImpl implements PostCommentService {
 	@Autowired
 	private PostMapper postMapper;
 	@Autowired
-	private ReplyPostCommentService replyPostCommentService;
-	@Autowired
 	private CircleMapper circleMapper;
 	@Autowired
 	private GroupMapper groupMapper;
@@ -37,6 +35,8 @@ public class PostCommentServiceImpl implements PostCommentService {
 	private TopicMapper topicMapper;
 	@Autowired
 	private UserMapper userMapper;
+	@Autowired
+	private ReplyPostCommentMapper replyPostCommentMapper;
 
 	/**
 	 * 用户评论帖子
@@ -215,7 +215,11 @@ public class PostCommentServiceImpl implements PostCommentService {
 				}
 		);
 		//1. 删除reply_comment表数据
-		replyPostCommentService.batchDeleteByCommentId(ids);
+
+		replyPostCommentMapper.delete(
+				new LambdaQueryWrapper<ReplyPostComment>()
+						.in(ReplyPostComment::getReplyCommentId, ids)
+		);
 		//2. 删除post_comment表数据
 		postCommentMapper.deleteBatchIds(ids);
 	}
@@ -227,7 +231,10 @@ public class PostCommentServiceImpl implements PostCommentService {
 	@Override
 	public void batchDeleteByPostCommentIdFromAdmin(List<Long> ids) {
 		//1. 删除reply_comment表数据
-		replyPostCommentService.batchDeleteByCommentId(ids);
+		replyPostCommentMapper.delete(
+				new LambdaQueryWrapper<ReplyPostComment>()
+						.in(ReplyPostComment::getReplyCommentId, ids)
+		);
 		//2. 删除post_comment表数据
 		postCommentMapper.deleteBatchIds(ids);
 	}
