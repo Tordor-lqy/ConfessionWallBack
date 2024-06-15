@@ -3,6 +3,7 @@ package com.sanding.confessionwallback.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sanding.confessionwallback.common.context.BaseContext;
+import com.sanding.confessionwallback.common.exception.BaseException;
 import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.mapper.*;
 import com.sanding.confessionwallback.pojo.dto.PostCommentDTO;
@@ -16,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -200,10 +198,36 @@ public class PostCommentServiceImpl implements PostCommentService {
 	@Transactional
 	@Override
 	public void batchDeleteByPostCommentId(List<Long> ids) {
+		Long userId = BaseContext.getCurrentId();
+		postCommentMapper.selectList(new LambdaQueryWrapper<PostComment>()
+						.in(PostComment::getPostCommentId, ids)
+		).forEach(
+				postComment -> {
+					if (!Objects.equals(postComment.getUserId(), userId)) {
+						throw new BaseException("评论发布者与用户不匹配");
+					}
+				}
+		);
 		//1. 删除reply_comment表数据
 		replyPostCommentService.batchDeleteByCommentId(ids);
 		//2. 删除post_comment表数据
 		postCommentMapper.deleteBatchIds(ids);
+	}
+
+	/**
+	 * 根据用户id获取评论
+	 */
+	@Override
+	public PageResult getPostCommentByUserId(Long userId, Integer pageNum, Integer pageSize) {
+		Page<PostComment> page = new Page<>(pageNum, pageSize);
+
+		LambdaQueryWrapper<PostComment> queryWrapper = new LambdaQueryWrapper<PostComment>()
+				.eq(PostComment::getUserId, userId)
+				.orderByDesc(PostComment::getPostCommentCreateTime);
+
+		postCommentMapper.selectPage(page, queryWrapper);
+
+		return new PageResult(page.getTotal(), page.getRecords());
 	}
 
 

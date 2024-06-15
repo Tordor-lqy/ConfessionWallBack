@@ -40,11 +40,10 @@ public class UserReplyCommentController {
 
 	@GetMapping
 	@ApiOperation("查看自己发布的回复")
-	public PageResult getMyComment(ReplyPostCommentPageQueryDTO replyPostCommentPageQueryDTO) {
+	public PageResult getMyComment(Integer p, Integer s) {
 		Long userId = BaseContext.getCurrentId();
 		log.info("查看用户{}发布的回复", userId);
-		replyPostCommentPageQueryDTO.setUserId(userId);
-		PageResult pageResult = replyPostCommentService.getReplyPostComment(replyPostCommentPageQueryDTO);
+		PageResult pageResult = replyPostCommentService.getReplyPostCommentByUserId(userId, p, s);
 		return pageResult;
 	}
 
@@ -52,7 +51,7 @@ public class UserReplyCommentController {
 	@ApiOperation("批量删除自己发布的回复")
 	public Result deleteMyReplyComment(@RequestParam List<Long> ids) {
 		log.info("删除评论ids={}", ids);
-		replyPostCommentService.batchDeleteByPostReplyId(ids);
+		replyPostCommentService.batchDeleteReplyCommentByReplyCommentId(ids);
 		return Result.success();
 	}
 }
