@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sanding.confessionwallback.common.context.BaseContext;
+import com.sanding.confessionwallback.common.exception.BaseException;
 import com.sanding.confessionwallback.common.exception.UserLikeException;
 import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.mapper.PostMapper;
@@ -62,6 +63,9 @@ public class PostUserLikeServiceImpl implements PostUserLikeService {
                     .eq(Post::getPostId, postId)
                     .eq(Post::getUserId, userId);
             Post post = postMapper.selectOne(wrapper);
+            if(post == null){
+                throw new BaseException("帖子不存在");
+            }
             Long count = post.getPostLikeCount() + 1;
             //帖子点赞数加一
             LambdaUpdateWrapper<Post> wrapper1 = new LambdaUpdateWrapper<Post>()

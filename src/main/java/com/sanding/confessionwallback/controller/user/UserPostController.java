@@ -39,17 +39,17 @@ public class UserPostController {
         return  Result.success();
     }
 
-    ///**
-    // * 用户取消点赞评论
-    // * @param postId
-    // * @return
-    // */
-    //@DeleteMapping("like")
-    //public Result delLikeTopic(Long postId){
-    //    log.info("用户取消点赞帖子的id:{}",postId);
-    //    postUserLikeService.delLikeTopic(postId);
-    //   return Result.success();
-    //}
+    /**
+     * 用户取消点赞评论
+     * @param postId
+     * @return
+     */
+    @DeleteMapping("like")
+    public Result delLikeTopic(Long postId){
+        log.info("用户取消点赞帖子的id:{}",postId);
+        postUserLikeService.delLikeTopic(postId);
+       return Result.success();
+    }
 
     ///**
     // *  用户评论帖子

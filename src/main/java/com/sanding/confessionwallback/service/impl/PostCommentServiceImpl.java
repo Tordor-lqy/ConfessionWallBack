@@ -54,7 +54,13 @@ public class PostCommentServiceImpl implements PostCommentService {
 		  评论表插入即可
 		 */
 		//构建评论对象
-		PostComment postComment = PostComment.builder().postId(postId).userId(userId).commentContent(postCommentDTO.getCommentContent()).commentLikeCount(PostComment.MO_LIKE).postCommentCreateTime(LocalDateTime.now()).postUserId(postUserId).build();
+		PostComment postComment = PostComment.builder()
+				.postId(postId)
+				.userId(userId)
+				.commentContent(postCommentDTO.getCommentContent())
+				.commentLikeCount(PostComment.MO_LIKE)
+				.postCommentCreateTime(LocalDateTime.now())
+				.postUserId(postUserId).build();
 		postCommentMapper.insert(postComment);
 		//帖子评论数加一
 		postMapper.insertCommentCount(postCommentDTO.getPostId());
