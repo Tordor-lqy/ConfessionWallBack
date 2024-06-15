@@ -3,6 +3,7 @@ package com.sanding.confessionwallback.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sanding.confessionwallback.common.exception.TopicException;
 import com.sanding.confessionwallback.common.result.PageResult;
@@ -18,6 +19,7 @@ import com.sanding.confessionwallback.pojo.entity.Group;
 import com.sanding.confessionwallback.pojo.entity.Post;
 import com.sanding.confessionwallback.pojo.entity.Topic;
 import com.sanding.confessionwallback.service.TopicService;
+import net.sf.jsqlparser.statement.select.Top;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,56 +38,60 @@ public class TopicServiceImpl implements TopicService {
     private CircleMapper circleMapper;
     @Autowired
     private GroupMapper groupMapper;
+
     /**
      * 分页查询某组话题
+     *
      * @param topicPageQueryDTO
      * @return
      */
     @Override
     public PageResult pageByGroup(TopicPageQueryDTO topicPageQueryDTO) {
-        Page<Topic> page =new Page<Topic>(topicPageQueryDTO.getP(),topicPageQueryDTO.getS());
+        Page<Topic> page = new Page<Topic>(topicPageQueryDTO.getP(), topicPageQueryDTO.getS());
 
-        LambdaQueryWrapper<Topic> wrapper =new LambdaQueryWrapper<Topic>()
-                .eq(Topic::getGroupId,topicPageQueryDTO.getGroupId());
+        LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<Topic>()
+                .eq(Topic::getGroupId, topicPageQueryDTO.getGroupId());
 
-        Page<Topic> resultPage = topicMapper.selectPage(page,wrapper);
+        Page<Topic> resultPage = topicMapper.selectPage(page, wrapper);
 
-        return new PageResult(resultPage.getTotal(),resultPage.getRecords());
+        return new PageResult(resultPage.getTotal(), resultPage.getRecords());
     }
 
     /**
      * 新建话题
+     *
      * @param topicDTO
      */
     @Override
     public void save(TopicDTO topicDTO) {
         //判断话题是否存在
-        LambdaQueryWrapper<Topic> wrapper =new LambdaQueryWrapper<Topic>()
+        LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<Topic>()
                 .select(Topic::getTopicId)
-                .eq(Topic::getTopicName,topicDTO.getTopicName())
-                .eq(Topic::getCircleId,topicDTO.getCircleId())
-                .eq(Topic::getGroupId,topicDTO.getGroupId());
+                .eq(Topic::getTopicName, topicDTO.getTopicName())
+                .eq(Topic::getCircleId, topicDTO.getCircleId())
+                .eq(Topic::getGroupId, topicDTO.getGroupId())
+                .eq(Topic::getIsDelete, 0);
         List<Long> topicId = topicMapper.selectObjs(wrapper);
-        if(topicId.size()>0){
+        if (topicId.size() > 0) {
             throw new TopicException("该话题已存在");
-        }else {
+        } else {
             //创建新话题
-            Topic tp=new Topic();
-            BeanUtils.copyProperties(topicDTO,tp);
+            Topic tp = new Topic();
+            BeanUtils.copyProperties(topicDTO, tp);
             topicMapper.insert(tp);
         }
     }
 
     /**
-     *
      * 多条件分页查询话题
+     *
      * @param topicPageQueryDTO
      * @return
      */
     @Override
     public PageResult page(TopicPageQueryDTO topicPageQueryDTO) {
 
-        Page<Topic> page =new Page<>(topicPageQueryDTO.getP(), topicPageQueryDTO.getS());
+        Page<Topic> page = new Page<>(topicPageQueryDTO.getP(), topicPageQueryDTO.getS());
         QueryWrapper<Topic> wrapper = new QueryWrapper<>();
         // 根据传入的条件构建查询条件
         //groupId
@@ -98,7 +104,7 @@ public class TopicServiceImpl implements TopicService {
         }
         //圈子Id
         if (topicPageQueryDTO.getCircleId() != null) {
-            wrapper.eq(topicPageQueryDTO.CIRCLE_ID,topicPageQueryDTO.getCircleId());
+            wrapper.eq(topicPageQueryDTO.CIRCLE_ID, topicPageQueryDTO.getCircleId());
         }
 
         // circleName
@@ -127,38 +133,45 @@ public class TopicServiceImpl implements TopicService {
 
         Page<Topic> resultPage = topicMapper.selectPage(page, wrapper);
 
-        return  new PageResult(resultPage.getTotal(), resultPage.getRecords());
+        return new PageResult(resultPage.getTotal(), resultPage.getRecords());
     }
 
     /**
      * 修改话题
+     *
      * @param topicDTO
      */
     @Override
     public void updateTopic(TopicDTO topicDTO) {
         //修改话题
-        Topic topic = new Topic();
-        BeanUtils.copyProperties(topicDTO,topic);
-        LambdaQueryWrapper<Topic> wrapper=new LambdaQueryWrapper<Topic>()
-                .eq(Topic::getTopicId,topicDTO.getTopicId());
-        topicMapper.update(topic,wrapper);
+//        Topic topic = new Topic();
+//        BeanUtils.copyProperties(topicDTO, topic);
+//        LambdaQueryWrapper<Topic> wrapper = new LambdaQueryWrapper<Topic>()
+//                .eq(Topic::getTopicId, topicDTO.getTopicId());
+//        topicMapper.update(topic, wrapper);
+        topicMapper.update(new LambdaUpdateWrapper<Topic>()
+                .set(Topic::getTopicName, topicDTO.getTopicName())
+                .eq(Topic::getTopicId , topicDTO.getTopicId())
+        );
+
     }
 
     /**
      * 删除话题
+     *
      * @param topicId
      */
     @Override
 
     public void deleteByTopicId(Long topicId) {
         //判断话题下是否有帖子
-        LambdaQueryWrapper<Post> wrapper =new LambdaQueryWrapper<Post>()
-                .eq(Post::getTopicId,topicId);
+        LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<Post>()
+                .eq(Post::getTopicId, topicId);
         List<Post> list = postMapper.selectList(wrapper);
-        if(list.isEmpty()){
+        if (list.isEmpty()) {
             //删除话题
             topicMapper.deleteById(topicId);
-        }else{
+        } else {
             throw new TopicException("存在帖子不允许删除");
         }
 
@@ -170,7 +183,7 @@ public class TopicServiceImpl implements TopicService {
      */
     public List<Topic> selectByGroupId(Long groupId) {
         LambdaQueryWrapper<Topic> queryWrapper = new LambdaQueryWrapper<Topic>()
-                .eq(Topic::getGroupId,groupId);
+                .eq(Topic::getGroupId, groupId);
         List<Topic> list = topicMapper.selectList(queryWrapper);
         return list;
     }
