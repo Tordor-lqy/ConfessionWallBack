@@ -35,11 +35,10 @@ public class UserPostCommentController {
 
 	@GetMapping
 	@ApiOperation("查看自己发布的评论")
-	public PageResult getMyComment(PostCommentPageQueryDTO postCommentPageQueryDTO) {
+	public PageResult getMyComment(Integer p, Integer s) {
 		Long userId = BaseContext.getCurrentId();
 		log.info("查看用户{}发布的评论", userId);
-		postCommentPageQueryDTO.setUserId(userId);
-		PageResult pageResult = postCommentService.getPostComment(postCommentPageQueryDTO);
+		PageResult pageResult = postCommentService.getPostCommentByUserId(userId, p, s);
 		return pageResult;
 	}
 

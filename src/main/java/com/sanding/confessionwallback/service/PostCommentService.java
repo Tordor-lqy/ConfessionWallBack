@@ -18,4 +18,6 @@ public interface PostCommentService {
     PageResult getPostComment(PostCommentPageQueryDTO postCommentPageQueryDTO);
 
     void batchDeleteByPostCommentId(List<Long> ids);
+
+    PageResult getPostCommentByUserId(Long userId, Integer pageNum, Integer pageSize);
 }

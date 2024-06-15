@@ -60,22 +60,15 @@ public class ReplyPostCommentServiceImpl implements ReplyPostCommentService {
 	}
 
 	/**
-	 * 根据DTO分页查询回复
+	 * 根据userId分页查询回复
 	 */
 	@Override
-	public PageResult getReplyPostComment(ReplyPostCommentPageQueryDTO replyPostCommentPageQueryDTO) {
-		Page<ReplyPostComment> page = new Page<>(
-				replyPostCommentPageQueryDTO.getP(),
-				replyPostCommentPageQueryDTO.getS()
-		);
+	public PageResult getReplyPostCommentByUserId(Long userId, Integer p, Integer s) {
+		Page<ReplyPostComment> page = new Page<>(p, s);
 
-		LambdaQueryWrapper<ReplyPostComment> queryWrapper = new LambdaQueryWrapper<>();
-
-		if (replyPostCommentPageQueryDTO.getUserId() != null) {
-			queryWrapper.eq(ReplyPostComment::getUserId, replyPostCommentPageQueryDTO.getUserId());
-		}
-
-		queryWrapper.orderByDesc(ReplyPostComment::getCreateTime);
+		LambdaQueryWrapper<ReplyPostComment> queryWrapper = new LambdaQueryWrapper<ReplyPostComment>()
+				.eq(ReplyPostComment::getUserId, userId)
+				.orderByDesc(ReplyPostComment::getCreateTime);
 
 		replyPostCommentMapper.selectPage(page, queryWrapper);
 
@@ -86,10 +79,12 @@ public class ReplyPostCommentServiceImpl implements ReplyPostCommentService {
 	 * 根据回复id批量删除回复
 	 */
 	@Override
-	public void batchDeleteByPostReplyId(List<Long> replyIds) {
+	public void batchDeleteReplyCommentByReplyCommentId(List<Long> replyIds) {
 		replyPostCommentMapper.delete(
 				new LambdaQueryWrapper<ReplyPostComment>()
-						.in(ReplyPostComment::getPostReplyId, replyIds)
+						.or().in(ReplyPostComment::getPostReplyId, replyIds)
+						.or().in(ReplyPostComment::getSecReplyId, replyIds)
+
 		);
 	}
 
