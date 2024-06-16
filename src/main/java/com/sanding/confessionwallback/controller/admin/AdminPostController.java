@@ -3,7 +3,6 @@ package com.sanding.confessionwallback.controller.admin;
 import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.common.result.Result;
 import com.sanding.confessionwallback.pojo.dto.*;
-import com.sanding.confessionwallback.pojo.dto.PostCommentPageQueryDTO;
 import com.sanding.confessionwallback.pojo.dto.PostPageQueryDTO;
 import com.sanding.confessionwallback.pojo.entity.Post;
 import com.sanding.confessionwallback.service.PostCommentService;
@@ -55,8 +54,6 @@ public class AdminPostController {
     }
     /**
      * 修改帖子
-     * @param postDTO
-     * @return
      */
     @PutMapping
     @ApiOperation("修改帖子")
@@ -85,24 +82,6 @@ public class AdminPostController {
         Post post=postService.getPostByPostId(postId);
         return Result.success(post);
     }
-    ///** 查看帖子评论(不考虑回复 ， 分页)
-    // * */
-    //@GetMapping("/comment")
-    //@ApiOperation("分页查看帖子评论")
-    //public Result<PageResult> selectPostComments(PostCommentPageQueryDTO postCommentPageQueryDTO){
-    //    log.info("分页查看帖子{} 的评论",postCommentPageQueryDTO);
-    //    PageResult pageResult=postCommentService.selectPostComments(postCommentPageQueryDTO);
-    //    return Result.success(pageResult);
-    //}
-    ///** 根据评论ID查询回复(分页)
-    // * */
-    //@GetMapping("/replyComment")
-    //@ApiOperation("根据评论ID查询回复")
-    //public Result<PageResult> selectReplyComments(PostCommentPageQueryDTO postCommentPageQueryDTO){
-    //    log.info("根据评论ID:{}查询回复",postCommentPageQueryDTO.getPostCommentId());
-    //    PageResult pageResult=postCommentService.selectReplyComments(postCommentPageQueryDTO);
-    //    return Result.success(pageResult);
-    //}
 
     /** 查询帖子的点赞用户列表(分页)
      * */

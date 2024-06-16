@@ -5,7 +5,6 @@ import com.sanding.confessionwallback.common.context.BaseContext;
 import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.common.result.Result;
 import com.sanding.confessionwallback.pojo.dto.PostCommentDTO;
-import com.sanding.confessionwallback.pojo.dto.PostCommentPageQueryDTO;
 import com.sanding.confessionwallback.service.PostCommentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,15 +37,14 @@ public class UserPostCommentController {
 	public PageResult getMyComment(Integer p, Integer s) {
 		Long userId = BaseContext.getCurrentId();
 		log.info("查看用户{}发布的评论", userId);
-		PageResult pageResult = postCommentService.getPostCommentByUserId(userId, p, s);
-		return pageResult;
+		return postCommentService.getPostCommentByUserId(userId, p, s);
 	}
 
 	@DeleteMapping
 	@ApiOperation("批量删除自己发布的评论")
 	public Result deleteMyComment(@RequestParam List<Long> ids) {
 		log.info("删除评论ids={}", ids);
-		postCommentService.batchDeleteByPostCommentId(ids);
+		postCommentService.batchDeleteByPostCommentIdFromUser(ids);
 		return Result.success();
 	}
 }
