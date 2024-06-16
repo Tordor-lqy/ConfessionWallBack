@@ -3,6 +3,8 @@ package com.sanding.confessionwallback.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.sanding.confessionwallback.common.context.BaseContext;
+import com.sanding.confessionwallback.common.exception.BaseException;
 import com.sanding.confessionwallback.common.result.PageResult;
 import com.sanding.confessionwallback.mapper.UserFansMapper;
 import com.sanding.confessionwallback.mapper.UserMapper;
@@ -47,7 +49,7 @@ public class UserFansServiceImpl implements UserFansService {
                         .in(User::getUserId, fansIdList)
         );
         List<UserFansVO> userFansVOList = new ArrayList<>();
-        for (User user : userList){
+        for (User user : userList) {
             userFansVOList.add(new UserFansVO(user));
         }
         return new PageResult(userFansList.getTotal(), userFansVOList);
@@ -70,7 +72,7 @@ public class UserFansServiceImpl implements UserFansService {
                         .in(User::getUserId, fansIdList)
         );
         List<UserFansVO> userFansVOList = new ArrayList<>();
-        for (User user : userList){
+        for (User user : userList) {
             userFansVOList.add(new UserFansVO(user));
         }
         return new PageResult(userFansList.getTotal(), userFansVOList);
@@ -78,10 +80,40 @@ public class UserFansServiceImpl implements UserFansService {
     }
 
     @Override
-    public UserVO getUserInfo(UserFansDTO userFansDTO) {
-        User user = userMapper.selectById(userFansDTO.getUserId());
+    public UserVO getUserInfo(Long userId) {
+        User user = userMapper.selectById(userId);
         UserVO userVO = new UserVO();
-        BeanUtils.copyProperties(user , userVO);
+        BeanUtils.copyProperties(user, userVO);
         return userVO;
+    }
+
+
+    @Override
+    public void follow(Long userId) {
+        // 判断是否已经关注
+        UserFans userFans = userFansMapper.selectOne(new LambdaQueryWrapper<UserFans>()
+                .eq(UserFans::getUserId, userId)
+                .eq(UserFans::getFansId, BaseContext.getCurrentId()));
+        if (userFans != null) {
+            throw new BaseException("已经关注过，请勿重复操作");
+        }
+        // 新增关注
+        UserFans userFan = new UserFans();
+        userFan.setUserId(userId);
+        userFan.setFansId(BaseContext.getCurrentId());
+        userFansMapper.insert(userFan);
+    }
+
+    @Override
+    public void unfollow(Long userId) {
+        // 判断是否已经关注
+        UserFans userFans = userFansMapper.selectOne(new LambdaQueryWrapper<UserFans>()
+                .eq(UserFans::getUserId, userId)
+                .eq(UserFans::getFansId, BaseContext.getCurrentId()));
+        if (userFans == null) {
+            throw new BaseException("没有关注过，请勿重复操作");
+        }
+        // 删除关注
+        userFansMapper.deleteById(userFans.getUserFansId());
     }
 }

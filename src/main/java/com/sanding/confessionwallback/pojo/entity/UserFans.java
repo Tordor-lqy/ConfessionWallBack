@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
 @TableName("cw_user_fans")
 public class UserFans {
     @TableId(type = IdType.AUTO)

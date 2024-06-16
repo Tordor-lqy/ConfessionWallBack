@@ -14,5 +14,9 @@ public interface UserFansService {
 
     PageResult getFollowList(UserFansDTO userFansDTO);
 
-    UserVO getUserInfo(UserFansDTO userFansDTO);
+    UserVO getUserInfo(Long userId);
+
+    void follow(Long userId);
+
+    void unfollow(Long userId);
 }
